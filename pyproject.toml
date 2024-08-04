@@ -28,6 +28,7 @@ pyjwt = "*"
 # utils
 httpx = "*"
 ujson = "*"
+pytz = "^2024.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"

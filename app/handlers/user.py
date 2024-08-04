@@ -6,6 +6,7 @@ from starlette import status
 
 from app.exceptions.api_base import APIException
 from app.libs.database import RedisPool
+from app.serializers.v1.user import UserLogin, LoginResponse
 
 
 class UserHandler:
@@ -17,6 +18,14 @@ class UserHandler:
     ):
         """initialize"""
         # self.redis: Redis = redis.create()
+
+    async def login(self, model: UserLogin) -> LoginResponse:
+        """
+        Login
+        :param model:
+        :return:
+        """
+        return LoginResponse(verified=True, first_login=True)
 
     async def check_first_login(self, uid: str) -> bool:
         """
