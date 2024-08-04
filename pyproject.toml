@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "conf-webapi"
+version = "0.1.0"
+description = ""
+authors = ["Jay Hsia <jayhsia1997@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+# base
+dependency-injector = "*"
+fastapi = "*"
+fastapi-limiter = "^0.1.6"
+uvicorn = "*"
+pydantic = "*"
+pydantic-settings = "*"
+python-dotenv = "*"
+# db
+asyncpg = "^0.29.0"
+redis = "*"
+sqlalchemy = "1.3.20"
+psycopg2-binary = "^2.9.9"
+# firebase
+firebase-admin = "^6.5.0"
+# security
+pyjwt = "*"
+# utils
+httpx = "*"
+ujson = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+pytest-asyncio = "*"
+alembic = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
