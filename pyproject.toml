@@ -16,6 +16,10 @@ uvicorn = "*"
 pydantic = "*"
 pydantic-settings = "*"
 python-dotenv = "*"
+# django
+django = "^5.1"
+django-environ = "^0.11.2"
+wagtail = "^6.2"
 # db
 asyncpg = "^0.29.0"
 redis = "*"
@@ -29,6 +33,8 @@ pyjwt = "*"
 httpx = "*"
 ujson = "*"
 pytz = "^2024.1"
+django-redis = "^5.4.0"
+django-model-utils = "^4.5.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"
