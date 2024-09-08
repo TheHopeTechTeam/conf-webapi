@@ -200,6 +200,6 @@ DATABASES = {
 try:
     google_certificate_path: PosixPath = Path("env/google_certificate.json")
     GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
-except FileNotFoundError:
+except Exception:
     google_certificate_path: PosixPath = Path("/etc/secrets/google_certificate.json")
     GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())

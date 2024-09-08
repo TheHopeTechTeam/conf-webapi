@@ -16,8 +16,3 @@ else:
     from django.core.management.utils import get_random_secret_key
 
     SECRET_KEY = get_random_secret_key()
-
-
-CACHES = {"default": {**env.cache(), "KEY_PREFIX": "dex-portal"}}
-
-DATABASES = {"default": env.db()}
