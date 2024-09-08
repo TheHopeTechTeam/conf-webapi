@@ -168,7 +168,7 @@ lxml = ["lxml"]
 name = "brotli"
 version = "1.1.0"
 description = "Python bindings for the Brotli compression library"
-optional = true
+optional = false
 python-versions = "*"
 files = [
     {file = "Brotli-1.1.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:e1140c64812cb9b06c922e77f1c26a75ec5e3f0fb2bf92cc8c58720dec276752"},
@@ -2473,7 +2473,7 @@ testing = ["Jinja2 (>=3.0,<3.2)", "azure-mgmt-cdn (>=12.0,<13.0)", "azure-mgmt-f
 name = "whitenoise"
 version = "6.7.0"
 description = "Radically simplified static file serving for WSGI applications"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "whitenoise-6.7.0-py3-none-any.whl", hash = "sha256:a1ae85e01fdc9815d12fa33f17765bc132ed2c54fa76daf9e39e879dd93566f6"},
@@ -2515,4 +2515,4 @@ wand = ["Wand (>=0.6,<1.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "140a23b2130a1eaff30ed80bd72f89119ae10aacd9c87dbec8032db1fb40c3bc"
+content-hash = "7b671ce75d207247e4aaa5b8a27c5c79bf52294ece1271a5b38515f7678ef293"
