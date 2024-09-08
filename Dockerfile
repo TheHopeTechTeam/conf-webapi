@@ -35,4 +35,5 @@ EXPOSE 8000
 # Make sure we use the virtualenv:
 ENV PATH="/opt/venv/bin:$PATH"
 
+#ENTRYPOINT ["sh", "/app/entrypoint.sh"]
 ENTRYPOINT [ "gunicorn", "-c", "gunicorn_conf.py", "portal:app" ]
