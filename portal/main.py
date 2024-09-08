@@ -11,6 +11,7 @@ from firebase_admin import credentials
 
 from portal.containers import Container
 from portal.libs.utils.lifespan import lifespan
+from portal.middlewares import CustomHTTPMiddleware
 from portal.routers import api_router
 
 __all__ = ["app"]
@@ -31,6 +32,7 @@ def register_middleware(application: FastAPI) -> None:
     :param application:
     :return:
     """
+    application.add_middleware(CustomHTTPMiddleware)
 
 
 def init_firebase():
@@ -68,22 +70,6 @@ def get_application(mount_application) -> FastAPI:
 
 
 app = get_application(get_asgi_application())
-
-
-@app.middleware("http")
-async def http_middleware_handler(request: Request, callback):
-    """
-
-    :param request:
-    :param callback:
-    :return:
-    """
-    try:
-        response: Response = await callback(request)
-        return response
-    finally:
-        container: Container = request.app.container
-        container.reset_singletons()
 
 
 # @app.exception_handler(InvalidAuthorizationToken)
