@@ -17,6 +17,10 @@ import environ
 
 env = environ.Env(
     DEBUG=(bool, False),
+    DJANGO_SECRET_KEY=(str, None),
+    DJANGO_SECURE_SSL_REDIRECT=(str, "off"),
+    DJANGO_ALLOWED_HOSTS=(str, "*"),
+    DATABASE_URL=(str, "postgres://none"),
     CACHE_URL=(str, "rediscache://none")
 )  # set default values and casting
 # Set the project base directory
