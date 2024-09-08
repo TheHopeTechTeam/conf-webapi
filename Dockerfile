@@ -31,11 +31,11 @@ COPY --from=builder /opt/venv /opt/venv
 COPY . .
 
 # Add custom environment variables needed by Django or your settings file here:
-ENV DJANGO_SETTINGS_MODULE=portal.settings.production
+ENV DJANGO_SETTINGS_MODULE=portal.configs.production
 ENV DEBUG=off
 
 # Call collectstatic with dummy environment variables:
-RUN DJANGO_SETTINGS_MODULE=portal.settings.production python manage.py collectstatic --noinput
+RUN DJANGO_SETTINGS_MODULE="portal.configs.production" python manage.py collectstatic --noinput
 
 EXPOSE 8000
 

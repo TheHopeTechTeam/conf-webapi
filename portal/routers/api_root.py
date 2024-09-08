@@ -9,9 +9,9 @@ router.include_router(api_v1_router, prefix="/v1", tags=["API v1"])
 
 
 @router.get(
-    path="/healthcheck"
+    path="/healthz"
 )
-async def healthcheck():
+async def healthz():
     """
     Healthcheck endpoint
     :return:
