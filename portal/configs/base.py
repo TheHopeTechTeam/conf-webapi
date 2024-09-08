@@ -25,7 +25,9 @@ env = environ.Env(
 )  # set default values and casting
 # Set the project base directory
 PROJECT_DIR = Path(__file__).resolve().parent.parent
+print(PROJECT_DIR)
 BASE_DIR = PROJECT_DIR.parent
+print(BASE_DIR)
 # BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
@@ -171,8 +173,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Wagtail settings
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+print(STATIC_ROOT)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+print(MEDIA_ROOT)
 MEDIA_URL = "/media/"
 
 WAGTAIL_SITE_NAME = "The Hope Conference Portal"
