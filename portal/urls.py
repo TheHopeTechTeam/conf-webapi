@@ -27,7 +27,7 @@ urlpatterns = [
     path('cms/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
     path('pages/', include(wagtail_urls)),
-    path("", redirect(to="cms")),
+    path("", lambda request: redirect("cms/")),
 ]
 
 if settings.DEBUG:
