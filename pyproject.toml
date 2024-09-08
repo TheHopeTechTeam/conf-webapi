@@ -21,6 +21,7 @@ python-dotenv = "*"
 django = "^5.1"
 django-environ = "^0.11.2"
 wagtail = "^6.2"
+whitenoise = { version = "*", optional = true, extras = ["brotli"] }
 # db
 asyncpg = "^0.29.0"
 redis = "*"

@@ -17,4 +17,8 @@ else:
 
     SECRET_KEY = get_random_secret_key()
 
+# static files
+MIDDLEWARE.append("whitenoise.middleware.WhiteNoiseMiddleware")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 ALLOWED_HOSTS = CORS_ALLOWED_ORIGINS
