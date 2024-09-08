@@ -21,7 +21,3 @@ else:
 CACHES = {"default": {**env.cache(), "KEY_PREFIX": "dex-portal"}}
 
 DATABASES = {"default": env.db()}
-
-google_certificate_path: PosixPath = Path("/etc/secrets/google_certificate.json")
-GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
-
