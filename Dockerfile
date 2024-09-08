@@ -43,5 +43,5 @@ RUN DJANGO_SETTINGS_MODULE=portal.configs.production python manage.py collectsta
 EXPOSE 8000
 
 
-#ENTRYPOINT ["sh", "/app/entrypoint.sh"]
-ENTRYPOINT [ "gunicorn", "-c", "gunicorn_conf.py", "portal:app" ]
+ENTRYPOINT ["sh", "/app/entrypoint.sh"]
+#ENTRYPOINT [ "gunicorn", "-c", "gunicorn_conf.py", "portal:app" ]
