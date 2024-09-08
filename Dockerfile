@@ -38,7 +38,7 @@ ENV DJANGO_SETTINGS_MODULE=portal.configs.production
 ENV DEBUG=off
 
 # Call collectstatic with dummy environment variables:
-RUN DJANGO_SETTINGS_MODULE=portal.configs.production python manage.py collectstatic --noinput
+RUN DJANGO_SETTINGS_MODULE=portal.configs.production python manage.py collectstatic --noinput --clear
 
 EXPOSE 8000
 

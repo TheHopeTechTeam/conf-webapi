@@ -164,6 +164,9 @@ WAGTAILADMIN_BASE_URL = "/cms"
 
 # ------------------------------------------------------------------------------
 # Environment variables
+ENV: str = env(var="ENV", default="dev")
+
+APP_NAME: str = "conf-webapi"
 
 REDIS_URL: str = env(var="REDIS_URL", default="redis://localhost:6379/0")
 CACHES = {
@@ -200,6 +203,12 @@ DATABASES = {
 try:
     google_certificate_path: PosixPath = Path("env/google_certificate.json")
     GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
-except Exception:
+except FileNotFoundError:
     google_certificate_path: PosixPath = Path("/etc/secrets/google_certificate.json")
-    GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
+    try:
+        GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
+    except Exception as e:
+        from logging import getLogger
+        logger = getLogger(APP_NAME)
+        logger.warning(f"Failed to load Google Firebase certificate: {e}")
+        GOOGLE_FIREBASE_CERTIFICATE = {}

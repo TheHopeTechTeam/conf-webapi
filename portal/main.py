@@ -53,7 +53,11 @@ def get_application(mount_application) -> FastAPI:
     container = Container()
     application.container = container
 
-    init_firebase()
+    # init firebase
+    try:
+        init_firebase()
+    except Exception as e:
+        print(f"Firebase init error: {e}")
     register_middleware(application=application)
     register_router(application=application)
 

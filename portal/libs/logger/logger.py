@@ -3,7 +3,7 @@ Logger
 """
 import logging
 
-from portal.config import configs
+from django.conf import settings
 from .generator import LoggerGenerator
 
 
@@ -27,5 +27,5 @@ def get_logger(app_name: str, env: str) -> logging.Logger:
     )
 
 
-__logger = get_logger(configs.APP_NAME, configs.ENV.upper())
+__logger = get_logger(settings.APP_NAME, settings.ENV.upper())
 logger = __logger
