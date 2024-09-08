@@ -16,3 +16,5 @@ else:
     from django.core.management.utils import get_random_secret_key
 
     SECRET_KEY = get_random_secret_key()
+
+ALLOWED_HOSTS = env("CORS_ALLOWED_ORIGINS").split(",")

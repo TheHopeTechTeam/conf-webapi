@@ -4,10 +4,11 @@ main application
 import firebase_admin
 from django.conf import settings
 from django.core.asgi import get_asgi_application
-from fastapi import FastAPI, Request, status, HTTPException, Response
+from fastapi import FastAPI, Request, status, HTTPException
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import JSONResponse
 from firebase_admin import credentials
+from starlette.middleware.cors import CORSMiddleware
 
 from portal.containers import Container
 from portal.libs.utils.lifespan import lifespan
@@ -33,6 +34,14 @@ def register_middleware(application: FastAPI) -> None:
     :return:
     """
     application.add_middleware(CustomHTTPMiddleware)
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.CORS_ALLOWED_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+        allow_origin_regex=settings.CORS_ALLOW_ORIGINS_REGEX
+    )
 
 
 def init_firebase():

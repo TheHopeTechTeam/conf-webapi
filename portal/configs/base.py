@@ -41,7 +41,6 @@ SECRET_KEY = "django-insecure-c46c63fqn26&64=#iq@t=fg8=uxknk24y7ifo+h)nqmf2n^ec@
 # SECURITY WARNING: don"t run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -195,6 +194,10 @@ CACHES = {
         }
     }
 }
+
+# [CORS]
+CORS_ALLOWED_ORIGINS: list = env("CORS_ALLOWED_ORIGINS", default="*").split(",")
+CORS_ALLOW_ORIGINS_REGEX: str = env("CORS_ALLOW_ORIGINS_REGEX", default=None)
 
 # [Database]
 DATABASE_HOST: str = env("DATABASE_HOST", default="localhost")
