@@ -30,6 +30,8 @@ BASE_DIR = PROJECT_DIR.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
+ENV: str = env(var="ENV", default="dev")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -131,6 +133,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Logging
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG" if ENV != "prod" else "INFO",
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -164,7 +182,6 @@ WAGTAILADMIN_BASE_URL = "/cms"
 
 # ------------------------------------------------------------------------------
 # Environment variables
-ENV: str = env(var="ENV", default="dev")
 
 APP_NAME: str = "conf-webapi"
 
