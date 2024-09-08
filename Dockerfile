@@ -28,19 +28,20 @@ RUN #apk add --no-cache binutils
 WORKDIR /app
 
 COPY --from=builder /opt/venv /opt/venv
-COPY . .
+COPY . /app
+
+# Make sure we use the virtualenv:
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Add custom environment variables needed by Django or your settings file here:
 ENV DJANGO_SETTINGS_MODULE=portal.configs.production
 ENV DEBUG=off
 
 # Call collectstatic with dummy environment variables:
-RUN DJANGO_SETTINGS_MODULE="portal.configs.production" python manage.py collectstatic --noinput
+RUN DJANGO_SETTINGS_MODULE=portal.configs.production python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-# Make sure we use the virtualenv:
-ENV PATH="/opt/venv/bin:$PATH"
 
 #ENTRYPOINT ["sh", "/app/entrypoint.sh"]
 ENTRYPOINT [ "gunicorn", "-c", "gunicorn_conf.py", "portal:app" ]
