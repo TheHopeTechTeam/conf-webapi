@@ -17,4 +17,4 @@ else:
 
     SECRET_KEY = get_random_secret_key()
 
-ALLOWED_HOSTS = env("CORS_ALLOWED_ORIGINS").split(",")
+ALLOWED_HOSTS = CORS_ALLOWED_ORIGINS
