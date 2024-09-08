@@ -17,9 +17,6 @@ else:
 
     SECRET_KEY = get_random_secret_key()
 
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(";")
 
 CACHES = {"default": {**env.cache(), "KEY_PREFIX": "dex-portal"}}
 

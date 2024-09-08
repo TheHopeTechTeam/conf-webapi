@@ -12,11 +12,15 @@ import os
 from django.apps import apps
 from django.conf import settings
 
+from portal.libs.logger import logger
+
 try:
     import portal.configs.local
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "portal.configs.dev")
+    logger.info("Using local settings")
 except ImportError:
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "portal.configs.production")
+    logger.info("Using production settings")
 
 apps.populate(settings.INSTALLED_APPS)
 
