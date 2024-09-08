@@ -17,6 +17,7 @@ import environ
 
 env = environ.Env(
     DEBUG=(bool, False),
+    CACHE_URL=(str, "rediscache://none")
 )  # set default values and casting
 # Set the project base directory
 PROJECT_DIR = Path(__file__).resolve().parent.parent
