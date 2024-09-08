@@ -3,7 +3,7 @@ name = "conf-webapi"
 version = "0.1.0"
 description = ""
 authors = ["Jay Hsia <jayhsia1997@gmail.com>"]
-license = "MIT"
+license = ""
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -12,6 +12,7 @@ python = "^3.11"
 dependency-injector = "*"
 fastapi = "*"
 fastapi-limiter = "^0.1.6"
+gunicorn = "*"
 uvicorn = "*"
 pydantic = "*"
 pydantic-settings = "*"

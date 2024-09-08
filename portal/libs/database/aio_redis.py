@@ -3,14 +3,14 @@ AioRedis
 """
 from redis.asyncio import Redis, from_url
 
-from portal.config import configs
+from django.conf import settings
 
 
 class RedisPool:
     """RedisPool"""
 
     def __init__(self):
-        self._uri = configs.REDIS_URL
+        self._uri = settings.REDIS_URL
         self._redis = None
 
     def create(self, db: int = 0) -> Redis:
