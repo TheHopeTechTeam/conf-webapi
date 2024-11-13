@@ -82,6 +82,11 @@ DATABASES = {
     }
 }
 
+# [Django]
+# [[Cross Site Request Forgery]]
+CSRF_COOKIE_DOMAIN: str = env("CSRF_COOKIE_DOMAIN", default=None)
+CSRF_TRUSTED_ORIGINS: list = env("CSRF_TRUSTED_ORIGINS", default="*").split(",")
+
 # [Google Cloud]
 try:
     path = "env/google_certificate.json"
