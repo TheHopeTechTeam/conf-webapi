@@ -20,8 +20,9 @@ python-dotenv = "*"
 # django
 django = "^5.1"
 django-environ = "^0.11.2"
-wagtail = "^6.2"
+wagtail = "^6.3"
 whitenoise = { version = "*", extras = ["brotli"] }
+django-storages = { version = "*", extras = ["google"] }
 # db
 asyncpg = "^0.29.0"
 redis = "*"

@@ -14,6 +14,7 @@ import os
 from pathlib import Path, PosixPath
 
 import environ
+from google.oauth2 import service_account
 
 env = environ.Env(
     DEBUG=(bool, False),
@@ -25,9 +26,7 @@ env = environ.Env(
 )  # set default values and casting
 # Set the project base directory
 PROJECT_DIR = Path(__file__).resolve().parent.parent
-print(PROJECT_DIR)
 BASE_DIR = PROJECT_DIR.parent
-print(BASE_DIR)
 # BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
@@ -43,6 +42,66 @@ SECRET_KEY = "django-insecure-c46c63fqn26&64=#iq@t=fg8=uxknk24y7ifo+h)nqmf2n^ec@
 # SECURITY WARNING: don"t run with debug turned on in production!
 DEBUG = env("DEBUG")
 
+# ------------------------------------------------------------------------------
+# Environment variables
+
+APP_NAME: str = "conf-webapi"
+
+REDIS_URL: str = env(var="REDIS_URL", default="redis://localhost:6379/0")
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# [CORS]
+CORS_ALLOWED_ORIGINS: list = env("CORS_ALLOWED_ORIGINS", default="*").split(",")
+CORS_ALLOW_ORIGINS_REGEX: str = env("CORS_ALLOW_ORIGINS_REGEX", default=None)
+
+# [Database]
+DATABASE_HOST: str = env("DATABASE_HOST", default="localhost")
+DATABASE_USER: str = env("DATABASE_USER", default="postgres")
+DATABASE_PASSWORD: str = env("DATABASE_PASSWORD", default="")
+DATABASE_PORT: str = env("DATABASE_PORT", default="5432")
+DATABASE_NAME: str = env("DATABASE_NAME", default="postgres")
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "HOST": DATABASE_HOST,
+        "NAME": DATABASE_NAME,
+        "PASSWORD": DATABASE_PASSWORD,
+        "PORT": f"{DATABASE_PORT}",
+        "USER": DATABASE_USER,
+        "TEST": {
+            "NAME": DATABASE_NAME
+        }
+    }
+}
+
+# [Google Cloud]
+try:
+    path = "env/google_certificate.json"
+    google_certificate_path: PosixPath = Path(path)
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
+    GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
+except FileNotFoundError:
+    path = "/etc/secrets/google_certificate.json"
+    google_certificate_path: PosixPath = Path(path)
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
+    try:
+        GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
+    except Exception as e:
+        from logging import getLogger
+
+        logger = getLogger(APP_NAME)
+        logger.warning(f"Failed to load Google Firebase certificate: {e}")
+        GOOGLE_FIREBASE_CERTIFICATE = {}
+
+# ------------------------------------------------------------------------------
 
 # Application definition
 
@@ -70,6 +129,8 @@ INSTALLED_APPS = [
     # wagtail end
     # apps
     "portal.apps.account",
+    "portal.apps.home",
+    "portal.apps.search",
     # apps end
 ]
 
@@ -91,7 +152,9 @@ ROOT_URLCONF = "portal.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(PROJECT_DIR, "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -169,15 +232,32 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, "static"),
-# ]
+STATICFILES_DIRS = [
+    os.path.join(PROJECT_DIR, "static"),
+]
 
-
-# ManifestStaticFilesStorage is recommended in production, to prevent outdated
-# JavaScript / CSS assets being served from cache (e.g. after a Wagtail upgrade).
-# See https://docs.djangoproject.com/en/3.2/ref/contrib/staticfiles/#manifeststaticfilesstorage
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+# Default storage settings, with the staticfiles storage updated.
+# See https://docs.djangoproject.com/en/5.1/ref/settings/#std-setting-STORAGES
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "OPTIONS": {
+            "bucket_name": f"{GS_CREDENTIALS.project_id}.appspot.com",
+            "location": f"{APP_NAME}-{ENV}",
+            "credentials": GS_CREDENTIALS,
+        },
+    },
+    # ManifestStaticFilesStorage is recommended in production, to prevent
+    # outdated JavaScript / CSS assets being served from cache
+    # (e.g. after a Wagtail upgrade).
+    # See https://docs.djangoproject.com/en/5.1/ref/contrib/staticfiles/#manifeststaticfilesstorage
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+    },
+    # "staticfiles": {
+    #     "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+    # },
+}
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = "static/"
@@ -195,57 +275,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 WAGTAIL_SITE_NAME = "The Hope Conference Portal"
 WAGTAILADMIN_BASE_URL = "/cms"
 
+# Allowed file extensions for documents in the document library.
+# This can be omitted to allow all files, but note that this may present a security risk
+# if untrusted users are allowed to upload files -
+# see https://docs.wagtail.org/en/stable/advanced_topics/deploying.html#user-uploaded-files
+WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
 
-# ------------------------------------------------------------------------------
-# Environment variables
-
-APP_NAME: str = "conf-webapi"
-
-REDIS_URL: str = env(var="REDIS_URL", default="redis://localhost:6379/0")
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
-    }
-}
-
-# [CORS]
-CORS_ALLOWED_ORIGINS: list = env("CORS_ALLOWED_ORIGINS", default="*").split(",")
-CORS_ALLOW_ORIGINS_REGEX: str = env("CORS_ALLOW_ORIGINS_REGEX", default=None)
-
-# [Database]
-DATABASE_HOST: str = env("DATABASE_HOST", default="localhost")
-DATABASE_USER: str = env("DATABASE_USER", default="postgres")
-DATABASE_PASSWORD: str = env("DATABASE_PASSWORD", default="")
-DATABASE_PORT: str = env("DATABASE_PORT", default="5432")
-DATABASE_NAME: str = env("DATABASE_NAME", default="postgres")
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "HOST": DATABASE_HOST,
-        "NAME": DATABASE_NAME,
-        "PASSWORD": DATABASE_PASSWORD,
-        "PORT": f"{DATABASE_PORT}",
-        "USER": DATABASE_USER,
-        "TEST": {
-            "NAME": DATABASE_NAME
-        }
-    }
-}
-
-# [Google Cloud]
-try:
-    google_certificate_path: PosixPath = Path("env/google_certificate.json")
-    GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
-except FileNotFoundError:
-    google_certificate_path: PosixPath = Path("/etc/secrets/google_certificate.json")
-    try:
-        GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
-    except Exception as e:
-        from logging import getLogger
-        logger = getLogger(APP_NAME)
-        logger.warning(f"Failed to load Google Firebase certificate: {e}")
-        GOOGLE_FIREBASE_CERTIFICATE = {}
+# Wagtail file size limits
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 2.5 * 1024 * 1024  # 2.5MB
