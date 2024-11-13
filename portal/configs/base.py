@@ -96,8 +96,8 @@ try:
 except FileNotFoundError:
     path = "/etc/secrets/google_certificate.json"
     google_certificate_path: PosixPath = Path(path)
-    GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
     try:
+        GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
         GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
     except Exception as e:
         from logging import getLogger
