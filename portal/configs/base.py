@@ -88,17 +88,37 @@ CSRF_COOKIE_DOMAIN: str = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS: list = env("CSRF_TRUSTED_ORIGINS", default="*").split(",")
 
 # [Google Cloud]
+## Set the default storage settings if the Google Cloud credentials are available using the GOOGLE_APPLICATION_CREDENTIALS environment variable.
+DEFAULT_STORAGE = {
+    "BACKEND": "django.core.files.storage.FileSystemStorage",
+}
 try:
     path = "env/google_certificate.json"
     google_certificate_path: PosixPath = Path(path)
     GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
     GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
+    DEFAULT_STORAGE = {
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "OPTIONS": {
+            "bucket_name": f"{GS_CREDENTIALS.project_id}.appspot.com",
+            "location": f"{APP_NAME}-{ENV}",
+            "credentials": GS_CREDENTIALS,
+        },
+    }
 except FileNotFoundError:
     path = "/etc/secrets/google_certificate.json"
     google_certificate_path: PosixPath = Path(path)
     try:
         GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
         GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
+        DEFAULT_STORAGE = {
+            "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+            "OPTIONS": {
+                "bucket_name": f"{GS_CREDENTIALS.project_id}.appspot.com",
+                "location": f"{APP_NAME}-{ENV}",
+                "credentials": GS_CREDENTIALS,
+            },
+        }
     except Exception as e:
         from logging import getLogger
 
@@ -244,14 +264,7 @@ STATICFILES_DIRS = [
 # Default storage settings, with the staticfiles storage updated.
 # See https://docs.djangoproject.com/en/5.1/ref/settings/#std-setting-STORAGES
 STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
-        "OPTIONS": {
-            "bucket_name": f"{GS_CREDENTIALS.project_id}.appspot.com",
-            "location": f"{APP_NAME}-{ENV}",
-            "credentials": GS_CREDENTIALS,
-        },
-    },
+    "default": DEFAULT_STORAGE,
     # ManifestStaticFilesStorage is recommended in production, to prevent
     # outdated JavaScript / CSS assets being served from cache
     # (e.g. after a Wagtail upgrade).
