@@ -57,7 +57,29 @@ def get_application(mount_application) -> FastAPI:
     """
     get application
     """
-    application = FastAPI(lifespan=lifespan)
+    application = FastAPI(
+        lifespan=lifespan,
+        swagger_ui_parameters={
+            "tryItOutEnabled": True,
+            "requestSnippetsEnabled": True,
+            "requestSnippets": {
+                "generators": {
+                    "curl_bash": {
+                        "title": "cURL (bash)",
+                        "syntax": "bash"
+                    },
+                    "curl_powershell": {
+                        "title": "cURL (PowerShell)",
+                        "syntax": "powershell"
+                    },
+                    "curl_cmd": {
+                        "title": "cURL (CMD)",
+                        "syntax": "bash"
+                    }
+                },
+            }
+        }
+    )
     # set route class
     # application.router.route_class = LogRouting
     # set container

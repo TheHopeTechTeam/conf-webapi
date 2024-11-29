@@ -84,8 +84,9 @@ DATABASES = {
 
 # [Django]
 # [[Cross Site Request Forgery]]
+env_csrf_trusted_origins = env("CSRF_TRUSTED_ORIGINS", default=None)
 CSRF_COOKIE_DOMAIN: str = env("CSRF_COOKIE_DOMAIN", default=None)
-CSRF_TRUSTED_ORIGINS: list = env("CSRF_TRUSTED_ORIGINS", default="*").split(",")
+CSRF_TRUSTED_ORIGINS: list = env_csrf_trusted_origins.split(",") if env_csrf_trusted_origins else []
 
 # [Google Cloud]
 ## Set the default storage settings if the Google Cloud credentials are available using the GOOGLE_APPLICATION_CREDENTIALS environment variable.
@@ -151,11 +152,19 @@ INSTALLED_APPS = [
     "wagtail",
     "modelcluster",
     "taggit",
+    "wagtail_modeladmin",
     # wagtail end
+    # auditlog
+    "auditlog",
     # apps
     "portal.apps.account",
+    "portal.apps.conference",
     "portal.apps.home",
+    "portal.apps.instructor",
+    "portal.apps.language",
+    "portal.apps.location",
     "portal.apps.search",
+    "portal.apps.workshop"
     # apps end
 ]
 
@@ -169,7 +178,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # wagtail
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
-    # wagtail end
+    # auditlog
+    "auditlog.middleware.AuditlogMiddleware",
 ]
 
 ROOT_URLCONF = "portal.urls"
@@ -301,3 +311,7 @@ WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'tx
 
 # Wagtail file size limits
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = 2.5 * 1024 * 1024  # 2.5MB
+
+# Auditlog settings
+AUDITLOG_TWO_STEP_MIGRATION = True
+AUDITLOG_USE_TEXT_CHANGES_IF_JSON_IS_NOT_PRESENT = True
