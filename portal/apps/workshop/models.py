@@ -15,6 +15,7 @@ class Workshop(index.Indexed, UUIDModel, SoftDeletableModel):
     conference = models.ForeignKey('conference.Conference', on_delete=models.CASCADE)
     location = models.ForeignKey('location.Location', on_delete=models.SET_NULL, null=True)
     instructor = models.ForeignKey('instructor.Instructor', on_delete=models.SET_NULL, null=True)
+    participants_limit = models.PositiveBigIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

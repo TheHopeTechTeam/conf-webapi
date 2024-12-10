@@ -164,6 +164,7 @@ INSTALLED_APPS = [
     "portal.apps.language",
     "portal.apps.location",
     "portal.apps.search",
+    "portal.apps.ticket",
     "portal.apps.workshop"
     # apps end
 ]

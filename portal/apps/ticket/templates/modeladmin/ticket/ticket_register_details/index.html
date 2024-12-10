@@ -1,0 +1,18 @@
+{% extends "modeladmin/index.html" %}
+{% block header_extra %}
+  <style>
+    .hide {
+      display: none;
+    }
+  </style>
+  {#  Upload CSV file  #}
+{#  <a href="{% if request.GET|length == 0 %}?action=Export{% else %}{{ request.get_full_path }}&amp;action=Import{% endif %}"#}
+{#     class="button bicolor icon icon-download">Import CSV</a>#}
+  <form method="post" enctype="multipart/form-data" action="{% url 'upload_csv' %}">
+    {% csrf_token %}
+    <label for="csv_file">Upload CSV file:</label>
+    <input type="file" name="csv_file" id="csv_file" accept=".csv">
+    <button type="submit">Upload</button>
+  </form>
+  {{ block.super }}
+{% endblock %}

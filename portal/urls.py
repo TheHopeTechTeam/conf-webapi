@@ -23,6 +23,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from portal.apps.search import views as search_views
+from portal.apps.ticket.views import upload_csv
 
 urlpatterns = [
     path("", RedirectView.as_view(url="/cms/")),
@@ -30,6 +31,7 @@ urlpatterns = [
     path('cms/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
+    path("upload/ticket/ticket_register_detail/upload_csv/", upload_csv, name="upload_csv"),
 ]
 
 if settings.DEBUG:
