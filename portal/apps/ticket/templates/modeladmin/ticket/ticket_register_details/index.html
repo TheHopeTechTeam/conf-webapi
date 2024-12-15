@@ -1,18 +1,40 @@
 {% extends "modeladmin/index.html" %}
 {% block header_extra %}
   <style>
-    .hide {
-      display: none;
+    .field-csv_file {
+      max-width: 300px;
     }
   </style>
   {#  Upload CSV file  #}
-{#  <a href="{% if request.GET|length == 0 %}?action=Export{% else %}{{ request.get_full_path }}&amp;action=Import{% endif %}"#}
-{#     class="button bicolor icon icon-download">Import CSV</a>#}
-  <form method="post" enctype="multipart/form-data" action="{% url 'upload_csv' %}">
+  {#  <a href="{% if request.GET|length == 0 %}?action=Export{% else %}{{ request.get_full_path }}&amp;action=Import{% endif %}"#}
+  {#     class="button bicolor icon icon-download">Import CSV</a>#}
+  <form id="uploadCSV" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <label for="csv_file">Upload CSV file:</label>
-    <input type="file" name="csv_file" id="csv_file" accept=".csv">
+    <input class="field-csv_file" type="file" name="csv_file" id="csv_file" accept=".csv">
     <button type="submit">Upload</button>
   </form>
+  <script>
+    $('#uploadCSV').on('submit', function (event) {
+      event.preventDefault();
+
+      var formData = new FormData(this);
+      console.log(formData);
+
+      $.ajax({
+        url: '/api/ticket/ticket_register_detail/upload_csv',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+          alert('上傳成功，請等待處理。');
+        },
+        error: function () {
+          alert('上傳失敗，請重試或聯絡管理員。');
+        }
+      });
+    });
+  </script>
   {{ block.super }}
 {% endblock %}
