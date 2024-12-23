@@ -6,8 +6,6 @@
     }
   </style>
   {#  Upload CSV file  #}
-  {#  <a href="{% if request.GET|length == 0 %}?action=Export{% else %}{{ request.get_full_path }}&amp;action=Import{% endif %}"#}
-  {#     class="button bicolor icon icon-download">Import CSV</a>#}
   <form id="uploadCSV" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <label for="csv_file">Upload CSV file:</label>
@@ -19,7 +17,6 @@
       event.preventDefault();
 
       var formData = new FormData(this);
-      console.log(formData);
 
       $.ajax({
         url: '/api/ticket/ticket_register_detail/upload_csv',

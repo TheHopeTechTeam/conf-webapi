@@ -1,10 +1,43 @@
 """
 Workshop Wagtail Hooks
 """
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
-from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
+from django.core.handlers.asgi import ASGIRequest
+from wagtail_modeladmin.options import ModelAdmin, modeladmin_register, CreateView
 
+from .forms import WorkshopForm
 from .models import Workshop
+
+
+class WorkshopCreateView(CreateView):
+
+    def post(self, request: ASGIRequest, *args, **kwargs):
+        """
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        response = super().post(request, *args, **kwargs)
+        return response
+
+    def get_context_data(self, form=None, **kwargs):
+        """
+
+        :param form:
+        :param kwargs:
+        :return:
+        """
+        context = super().get_context_data(form=form, **kwargs)
+        # temp_form: WorkshopForm = context["form"]
+        return context
+
+    def get_form_class(self):
+        """
+
+        :return:
+        """
+        return WorkshopForm
 
 
 @modeladmin_register
@@ -21,11 +54,10 @@ class WorkshopModelAdmin(ModelAdmin):
     search_fields = ("title", "location")
     ordering = ["title"]
 
-    custom_panels = [
-        FieldPanel("title"),
-        FieldPanel("description"),
-        FieldPanel("conference"),
-        FieldPanel("location"),
-        FieldPanel("instructor")
-    ]
-    edit_handler = ObjectList(custom_panels)
+    create_view_class = WorkshopCreateView
+
+    def get_create_template(self):
+        return "wagtailadmin/workshop/create.html"
+
+    def get_edit_template(self):
+        return "wagtailadmin/workshop/edit.html"

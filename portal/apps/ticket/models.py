@@ -77,7 +77,7 @@ class TicketRegisterDetail(index.Indexed, UUIDModel, SoftDeletableModel):
         verbose_name = "Ticket Register Detail"
         verbose_name_plural = "Ticket Register Details"
         ordering = ["registered_at"]
-        unique_together = ("ticket", "account")
+        unique_together = ("ticket_number", "ticket", "account")
 
 
 auditlog.register(TicketType)
