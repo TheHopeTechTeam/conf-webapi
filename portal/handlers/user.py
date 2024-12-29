@@ -29,9 +29,9 @@ class UserHandler:
         """
         if account := await Account.objects.aget(google_uid=self.user_context.uid):
             account.last_login = datetime.now(tz=pytz.UTC)
-            await account.save()
-            return LoginResponse(verified=True)
-        await Account.objects.acreate(
+            await account.asave()
+            return LoginResponse(id=account.id, verified=True)
+        account_obj: Account = await Account.objects.acreate(
             google_uid=self.user_context.uid,
             phone_number=self.user_context.token_payload.phone_number,
             auth_provider=self.user_context.token_payload.firebase.sign_in_provider,
@@ -40,7 +40,7 @@ class UserHandler:
             last_login=datetime.now(tz=pytz.UTC),
             app_name=model.app_name,
         )
-        return LoginResponse(verified=True, first_login=True)
+        return LoginResponse(id=account_obj.id, verified=True, first_login=True)
 
     async def check_first_login(self, uid: str):
         """

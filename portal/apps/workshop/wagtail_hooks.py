@@ -10,6 +10,18 @@ from .models import Workshop
 
 class WorkshopCreateView(CreateView):
 
+    def get(self, request: ASGIRequest, *args, **kwargs):
+        """
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        response = super().get(request, *args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
     def post(self, request: ASGIRequest, *args, **kwargs):
         """
 

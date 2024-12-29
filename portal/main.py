@@ -67,14 +67,6 @@ def get_application(mount_application) -> FastAPI:
                     "curl_bash": {
                         "title": "cURL (bash)",
                         "syntax": "bash"
-                    },
-                    "curl_powershell": {
-                        "title": "cURL (PowerShell)",
-                        "syntax": "powershell"
-                    },
-                    "curl_cmd": {
-                        "title": "cURL (CMD)",
-                        "syntax": "bash"
                     }
                 },
             }

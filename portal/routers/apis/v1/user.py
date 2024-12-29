@@ -53,6 +53,3 @@ async def get_user(
     """
     user = await user_handler.get_user(uid=uid)
     return user
-
-
-

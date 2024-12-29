@@ -3,6 +3,7 @@ Serializers for User model
 """
 from datetime import datetime
 from typing import Optional
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 
@@ -19,5 +20,6 @@ class LoginResponse(BaseModel):
     """
     Login response
     """
+    id: UUID = Field(..., description="ID")
     verified: bool = Field(default=False, description="Verified")
     first_login: bool = Field(default=False, description="First login")
