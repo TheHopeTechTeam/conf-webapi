@@ -1,51 +1,62 @@
 """
 Account API Router
 """
-import uuid
 import random
-from typing import Annotated, Optional
+import uuid
 
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Request, Response, Depends
-from fastapi.params import Header
 from starlette import status
 
 from portal.containers import Container
+from portal.handlers import AccountHandler
 from portal.libs.depends import (
     check_access_token,
     DEFAULT_RATE_LIMITERS,
 )
 from portal.route_classes import LogRoute
-from portal.serializers.base import HeaderInfo
-from portal.serializers.v1.account import AccountBase, AccountDetail
-from dateutil import parser
-
-
+from portal.serializers.v1.account import AccountLogin, AccountDetail, AccountUpdate, LoginResponse
 
 router = APIRouter(
     dependencies=[
+        check_access_token,
         *DEFAULT_RATE_LIMITERS
     ],
     route_class=LogRoute
 )
 
 
-@router.get(
-    path="/account/{account_id}",
-    response_model=AccountDetail,
+@router.post(
+    path="/login",
+    response_model=LoginResponse,
     status_code=status.HTTP_200_OK
+)
+@inject
+async def login(
+    model: AccountLogin,
+    account_handler: AccountHandler = Depends(Provide[Container.account_handler]),
+) -> LoginResponse:
+    """
+    Login
+    """
+    return await account_handler.login(model=model)
+
+
+@router.get(
+    path="/{account_id}",
+    response_model=AccountDetail,
+    status_code=status.HTTP_200_OK,
+    description="For getting an account personal information"
 )
 @inject
 async def get_account(
     request: Request,
     response: Response,
-    headers: Annotated[HeaderInfo, Header()],
     account_id: uuid.UUID,
 ) -> dict:
     """
     Get an account
     """
-    response.headers["Content-Language"] = headers.accept_language
     ticket_numbers = [str(f"TH{random.randint(100000, 999999)}") for _ in range(3)]
     ticket_types = ["REGULAR", "CREATIVE", "ALL ACCESS", "LEADERSHIP"]
     return AccountDetail(
@@ -59,3 +70,22 @@ async def get_account(
         belong_church="The Hope",
         identity="會眾",
     )
+
+
+@router.put(
+    path="/{account_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="For updating an account personal information"
+)
+@inject
+async def update_account(
+    request: Request,
+    response: Response,
+    account_id: uuid.UUID,
+    model: AccountUpdate,
+    account_handler: AccountHandler = Depends(Provide[Container.account_handler]),
+) -> None:
+    """
+    Update an account
+    """
+    await account_handler.update_account(account_id=account_id, model=model)

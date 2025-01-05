@@ -6,12 +6,11 @@ from typing import Optional
 from fastapi import Request
 from fastapi.security.http import HTTPAuthorizationCredentials, HTTPBearer
 
-from portal.handlers import AuthHandler
-from portal.libs.contexts.api_context import APIContext
-from portal.schemas.auth import FirebaseTokenPayload
-
+from portal.apps.account.models import Account
 from portal.exceptions.auth import UnauthorizedException
+from portal.handlers import AuthHandler
 from portal.libs.contexts.api_context import APIContext, set_api_context
+from portal.schemas.auth import FirebaseTokenPayload
 
 
 class AccessTokenAuth(HTTPBearer):
@@ -40,7 +39,10 @@ class AccessTokenAuth(HTTPBearer):
         """
         auth_handler = AuthHandler()
         payload: FirebaseTokenPayload = await auth_handler.verify_firebase_token(token=token)
-        # TODO: Get user info from database
+        try:
+            account = await Account.objects.aget(google_uid=payload.user_id)
+        except Account.DoesNotExist:
+            account = None
         return APIContext(
             token=token,
             token_payload=payload,
@@ -50,5 +52,7 @@ class AccessTokenAuth(HTTPBearer):
             display_name=payload.name,
             host=request.client.host,
             url=str(request.url),
-            path=request.url.path
+            path=request.url.path,
+            verified=True,
+            account=account
         )

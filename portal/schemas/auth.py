@@ -53,10 +53,10 @@ class FirebaseTokenPayload(BaseModel):
         "sub": "Un5ly0tx5nP6H79dVkq87kYwrHD0"
     }
     """
-    name: str
+    name: Optional[str] = None
     aud: str
     auth_time: int
-    email_verified: bool
+    email_verified: Optional[bool] = None
     email: Optional[str] = None
     exp: int
     firebase: FirebaseObject

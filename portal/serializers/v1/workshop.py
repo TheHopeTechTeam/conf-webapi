@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+from portal.serializers.v1.instructor import InstructorBase
+
 
 class WorkshopBase(BaseModel):
     """
@@ -23,8 +25,8 @@ class WorkshopDetail(WorkshopBase):
     """
     Workshop detail
     """
-    conference: str = Field(..., description="Conference")
-    instructor: str = Field(..., description="Instructor")
+    # conference: str = Field(..., description="Conference")
+    instructor: InstructorBase = Field(..., description="Instructor")
     participants_limit: int = Field(..., description="Participants Limit")
     is_full: bool = Field(..., description="The number of participants has reached the upper limit")
 

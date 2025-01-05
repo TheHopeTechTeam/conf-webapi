@@ -2,13 +2,14 @@
 Workshop forms
 """
 import datetime
+from zoneinfo import ZoneInfo
 
 from dateutil import parser
 from django import forms
 from wagtail.admin.forms import WagtailAdminModelForm
 
 from portal.apps.language.models import Language, Translation
-from portal.apps.workshop.models import Workshop, WorkshopSchedule
+from portal.apps.workshop.models import Workshop
 from portal.libs.shared import validator
 
 
@@ -35,12 +36,14 @@ class WorkshopForm(WagtailAdminModelForm):
     )
     start_datetime = forms.DateTimeField(
         required=True,
-        label="Start Date and Time",
+        label="Start Date Time",
+        help_text="Date Time will follow your selected time zone",
         template_name="form/tw_datetime.html"
     )
     end_datetime = forms.DateTimeField(
         required=True,
-        label="End Date and Time",
+        label="End Date Time",
+        help_text="Date Time will follow your selected time zone",
         template_name="form/tw_datetime.html"
     )
 
@@ -63,10 +66,12 @@ class WorkshopForm(WagtailAdminModelForm):
         """
         Clean start_datetime
         """
+        time_zone = self.cleaned_data.get("time_zone")
         start_datetime = self.cleaned_data.get("start_datetime")
+        start_datetime = start_datetime.replace(tzinfo=ZoneInfo(time_zone))
         if not start_datetime:
             raise forms.ValidationError("Start Date and Time is required")
-        if start_datetime < datetime.datetime.now(tz=datetime.timezone.utc):
+        if start_datetime < datetime.datetime.now(tz=ZoneInfo(time_zone)):
             raise forms.ValidationError("Start Date and Time should be greater than current Date and Time")
         return start_datetime
 
@@ -76,9 +81,11 @@ class WorkshopForm(WagtailAdminModelForm):
         """
         if not self.data.get("start_datetime"):
             raise forms.ValidationError("Start Date and Time is required")
+        time_zone = self.cleaned_data.get("time_zone")
         start_datetime = parser.parse(self.data.get("start_datetime"))
-        start_datetime = start_datetime.replace(tzinfo=datetime.timezone.utc)
+        start_datetime = start_datetime.replace(tzinfo=ZoneInfo(time_zone))
         end_datetime = self.cleaned_data.get("end_datetime")
+        end_datetime = end_datetime.replace(tzinfo=ZoneInfo(time_zone))
         if not end_datetime:
             raise forms.ValidationError("End Date and Time is required")
         if end_datetime < start_datetime:
@@ -97,11 +104,8 @@ class WorkshopForm(WagtailAdminModelForm):
         Save
         """
         instance: Workshop = super().save(commit=commit)
-        schedule_instance = WorkshopSchedule.objects.create(
-            workshop=instance,
-            start_datetime=self.cleaned_data.get("start_datetime"),
-            end_datetime=self.cleaned_data.get("end_datetime")
-        )
+        instance.start_datetime = self.cleaned_data.get("start_datetime")
+        instance.end_datetime = self.cleaned_data.get("end_datetime")
         translation_objs = []
         for field_name in self.fields:
             if "description_" in field_name:
@@ -126,7 +130,7 @@ class WorkshopForm(WagtailAdminModelForm):
                 unique_fields=["language", "object_id", "field_name"]
             )
         if commit:
-            schedule_instance.save()
+            instance.save()
             for translation_instance in translation_instances:
                 translation_instance.save()
         return instance
@@ -140,6 +144,7 @@ class WorkshopForm(WagtailAdminModelForm):
             "location",
             "instructor",
             "participants_limit",
+            "time_zone",
         ]
         exclude = [
             "start_datetime",

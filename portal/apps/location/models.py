@@ -6,6 +6,7 @@ from typing import Any
 from auditlog.registry import auditlog
 from django.db import models
 from model_utils.models import UUIDModel, SoftDeletableModel
+from wagtail.images.models import Image
 from wagtail.search import index
 
 
@@ -17,6 +18,13 @@ class Location(index.Indexed, UUIDModel, SoftDeletableModel):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ForeignKey(
+        Image,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',  # Disables reverse relation to optimize database structure
+    )
 
     def __str__(self):
         return self.name

@@ -2,9 +2,27 @@
 Account serializers
 """
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+
+
+class AccountLogin(BaseModel):
+    """
+    Account login
+    """
+    created_at: Optional[datetime] = Field(default=None, description="Created at")
+    app_name: str = Field(default="DEFAULT", description="App name")
+
+
+class LoginResponse(BaseModel):
+    """
+    Login response
+    """
+    id: UUID = Field(..., description="ID")
+    verified: bool = Field(default=False, description="Verified")
+    first_login: bool = Field(default=False, description="First login")
 
 
 class AccountBase(BaseModel):
@@ -26,3 +44,11 @@ class AccountDetail(AccountBase):
     ticket_type: str = Field(..., description="Ticket Type")
     belong_church: str = Field(..., description="Belong Church")
     identity: str = Field(..., description="Identity")
+
+
+class AccountUpdate(BaseModel):
+    """
+    Account update
+    """
+    display_name: str = Field(..., description="Display Name")
+    email: str = Field(..., description="Email")

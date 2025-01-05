@@ -1,14 +1,14 @@
 """
 FirebaseAuthentication
 """
-from firebase_admin import auth
+from firebase_admin import auth, App
 from firebase_admin.auth import UserRecord
 
 
 class FirebaseAuthentication:
     """FirebaseAuthentication"""
 
-    def __init__(self, app: str = None):
+    def __init__(self, app: App = None):
         """initialize"""
         self.app = app
 

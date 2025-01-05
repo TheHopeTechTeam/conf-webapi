@@ -2,11 +2,14 @@
 Top level handlers package
 """
 from .auth import AuthHandler
-from .user import UserHandler
+from .account import AccountHandler
+from .workshop import WorkshopHandler
 
 __all__ = [
     # auth
     "AuthHandler",
-    # user
-    "UserHandler"
+    # account
+    "AccountHandler",
+    # workshop
+    "WorkshopHandler"
 ]

@@ -6,6 +6,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from portal.apps.account.models import Account
 from portal.schemas.auth import FirebaseTokenPayload
 
 auth_context = ContextVar("APIContext")
@@ -13,6 +14,9 @@ auth_context = ContextVar("APIContext")
 
 class APIContext(BaseModel):
     """API Context"""
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
     token: Optional[str] = None
     token_payload: Optional[FirebaseTokenPayload] = None
     uid: Optional[str] = None
@@ -22,6 +26,8 @@ class APIContext(BaseModel):
     host: Optional[str] = None
     url: Optional[str] = None
     path: Optional[str] = None
+    verified: Optional[bool] = False
+    account: Optional[Account] = None
 
 
 def set_api_context(context: APIContext) -> Token:

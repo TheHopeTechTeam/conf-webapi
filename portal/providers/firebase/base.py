@@ -1,13 +1,15 @@
 """
 FirebaseProvider
 """
+from firebase_admin import App
+
 from .authentication import FirebaseAuthentication
 
 
 class FirebaseProvider:
     """FirebaseProvider"""
 
-    def __init__(self, app: str = "default"):
+    def __init__(self, app: App = None):
         """initialize"""
         self.app = app
 
