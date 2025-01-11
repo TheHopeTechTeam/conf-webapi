@@ -12,8 +12,19 @@ class AccountLogin(BaseModel):
     """
     Account login
     """
-    created_at: Optional[datetime] = Field(default=None, description="Created at")
-    app_name: str = Field(default="DEFAULT", description="App name")
+    created_at: Optional[datetime] = Field(
+        default=None,
+        description="(Optional) Created at"
+    )
+    app_name: str = Field(
+        default="DEFAULT",
+        description="(Optional) App name"
+    )
+    firebase_token: str = Field(
+        ...,
+        description="Firebase token",
+        frozen=True
+    )
 
 
 class LoginResponse(BaseModel):

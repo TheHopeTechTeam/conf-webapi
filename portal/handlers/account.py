@@ -3,13 +3,17 @@ AccountHandler
 """
 import uuid
 from datetime import datetime
+from typing import Optional
 
 import pytz
+from fastapi.security.utils import get_authorization_scheme_param
 from starlette import status
 
 from portal.apps.account.models import Account
 from portal.exceptions.api_base import APIException
+from portal.handlers import AuthHandler
 from portal.libs.contexts.api_context import get_api_context, APIContext
+from portal.schemas.auth import FirebaseTokenPayload
 from portal.serializers.v1.account import AccountLogin, AccountUpdate, LoginResponse
 
 
@@ -20,20 +24,35 @@ class AccountHandler:
         """initialize"""
         self._api_context: APIContext = get_api_context()
 
+    @staticmethod
+    async def verify_login_token(token: str) -> FirebaseTokenPayload:
+        """
+        Verify login token
+        :param token:
+        :return:
+        """
+        auth_handler = AuthHandler()
+        scheme, credentials = get_authorization_scheme_param(token)
+        try:
+            return await auth_handler.verify_firebase_token(token=credentials)
+        except Exception as e:
+            raise APIException(status_code=status.HTTP_401_UNAUTHORIZED, message="Unauthorized")
+
     async def login(self, model: AccountLogin) -> LoginResponse:
         """
         Login
         :param model:
         :return:
         """
-        if account := await Account.objects.aget(google_uid=self._api_context.uid):
+        token_payload = await self.verify_login_token(model.firebase_token)
+        if account := await Account.objects.aget(google_uid=token_payload.user_id):
             account.last_login = datetime.now(tz=pytz.UTC)
             await account.asave()
             return LoginResponse(id=account.id, verified=True)
         account_obj: Account = await Account.objects.acreate(
-            google_uid=self._api_context.uid,
-            phone_number=self._api_context.token_payload.phone_number,
-            auth_provider=self._api_context.token_payload.firebase.sign_in_provider,
+            google_uid=token_payload.user_id,
+            phone_number=token_payload.phone_number,
+            auth_provider=token_payload.firebase.sign_in_provider,
             status="active",
             created_at=model.created_at or datetime.now(tz=pytz.UTC),
             last_login=datetime.now(tz=pytz.UTC),

@@ -62,36 +62,6 @@ class WorkshopForm(WagtailAdminModelForm):
             self._meta.exclude.append(field_name)
         super().__init__(*args, **kwargs)
 
-    def clean_start_datetime(self):
-        """
-        Clean start_datetime
-        """
-        time_zone = self.cleaned_data.get("time_zone")
-        start_datetime = self.cleaned_data.get("start_datetime")
-        start_datetime = start_datetime.replace(tzinfo=ZoneInfo(time_zone))
-        if not start_datetime:
-            raise forms.ValidationError("Start Date and Time is required")
-        if start_datetime < datetime.datetime.now(tz=ZoneInfo(time_zone)):
-            raise forms.ValidationError("Start Date and Time should be greater than current Date and Time")
-        return start_datetime
-
-    def clean_end_datetime(self):
-        """
-        Clean end_datetime
-        """
-        if not self.data.get("start_datetime"):
-            raise forms.ValidationError("Start Date and Time is required")
-        time_zone = self.cleaned_data.get("time_zone")
-        start_datetime = parser.parse(self.data.get("start_datetime"))
-        start_datetime = start_datetime.replace(tzinfo=ZoneInfo(time_zone))
-        end_datetime = self.cleaned_data.get("end_datetime")
-        end_datetime = end_datetime.replace(tzinfo=ZoneInfo(time_zone))
-        if not end_datetime:
-            raise forms.ValidationError("End Date and Time is required")
-        if end_datetime < start_datetime:
-            raise forms.ValidationError("End Date and Time should be greater than Start Date and Time")
-        return end_datetime
-
     def clean(self):
         """
         Clean
@@ -144,9 +114,4 @@ class WorkshopForm(WagtailAdminModelForm):
             "location",
             "instructor",
             "participants_limit",
-            "time_zone",
-        ]
-        exclude = [
-            "start_datetime",
-            "end_datetime"
         ]

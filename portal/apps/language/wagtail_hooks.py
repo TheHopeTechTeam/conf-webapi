@@ -6,6 +6,7 @@ from wagtail.admin.panels import FieldPanel, ObjectList
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
 from .models import Language
+from portal.libs.consts.enums import MenuOrder
 
 
 @modeladmin_register
@@ -14,7 +15,7 @@ class LanguageModelAdmin(ModelAdmin):
     base_url_path = "languages"
     menu_label = "Languages"
     menu_icon = "site"
-    menu_order = 201
+    menu_order = MenuOrder.Language
     add_to_settings_menu = False
     add_to_admin_menu = True
     list_display = ("name", "code", "is_active")

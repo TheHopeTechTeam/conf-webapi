@@ -4,6 +4,7 @@ Instructor Wagtail Hooks
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
 from .models import Instructor
+from portal.libs.consts.enums import MenuOrder
 
 
 @modeladmin_register
@@ -12,7 +13,7 @@ class InstructorModelAdmin(ModelAdmin):
     base_url_path = "instructors"
     menu_label = "Instructors"
     menu_icon = "user"
-    menu_order = 205
+    menu_order = MenuOrder.Instructor
     add_to_settings_menu = False
     add_to_admin_menu = True
     list_display = ("name", "bio")

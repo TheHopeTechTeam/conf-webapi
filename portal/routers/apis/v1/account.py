@@ -19,7 +19,6 @@ from portal.serializers.v1.account import AccountLogin, AccountDetail, AccountUp
 
 router = APIRouter(
     dependencies=[
-        check_access_token,
         *DEFAULT_RATE_LIMITERS
     ],
     route_class=LogRoute
@@ -46,6 +45,7 @@ async def login(
     path="/{account_id}",
     response_model=AccountDetail,
     status_code=status.HTTP_200_OK,
+    dependencies=[check_access_token],
     description="For getting an account personal information"
 )
 @inject
@@ -53,7 +53,7 @@ async def get_account(
     request: Request,
     response: Response,
     account_id: uuid.UUID,
-) -> dict:
+) -> AccountDetail:
     """
     Get an account
     """
@@ -75,6 +75,7 @@ async def get_account(
 @router.put(
     path="/{account_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[check_access_token],
     description="For updating an account personal information"
 )
 @inject
