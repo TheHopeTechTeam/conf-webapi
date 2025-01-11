@@ -7,6 +7,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+from portal.schemas.mixins import UUIDBaseModel
+
 
 class AccountLogin(BaseModel):
     """
@@ -27,20 +29,18 @@ class AccountLogin(BaseModel):
     )
 
 
-class LoginResponse(BaseModel):
+class LoginResponse(UUIDBaseModel):
     """
     Login response
     """
-    id: UUID = Field(..., description="ID")
     verified: bool = Field(default=False, description="Verified")
     first_login: bool = Field(default=False, description="First login")
 
 
-class AccountBase(BaseModel):
+class AccountBase(UUIDBaseModel):
     """
     Account
     """
-    id: UUID = Field(..., description="ID")
     google_uid: str = Field(..., description="Google UID")
     phone_number: str = Field(..., description="Phone Number")
     email: str = Field(..., description="Email")

@@ -98,11 +98,13 @@ try:
     google_certificate_path: PosixPath = Path(path)
     GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
     GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
+    FIREBASE_STORAGE_BUCKET: str = f"{GS_CREDENTIALS.project_id}.appspot.com"
+    FIREBASE_STORAGE_LOCATION: str = f"{APP_NAME}-{ENV}" if ENV != "prod" else APP_NAME
     DEFAULT_STORAGE = {
         "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
         "OPTIONS": {
-            "bucket_name": f"{GS_CREDENTIALS.project_id}.appspot.com",
-            "location": f"{APP_NAME}-{ENV}",
+            "bucket_name": FIREBASE_STORAGE_BUCKET,
+            "location": FIREBASE_STORAGE_LOCATION,
             "credentials": GS_CREDENTIALS,
         },
     }
@@ -112,11 +114,13 @@ except FileNotFoundError:
     try:
         GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
         GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
+        FIREBASE_STORAGE_BUCKET: str = f"{GS_CREDENTIALS.project_id}.appspot.com"
+        FIREBASE_STORAGE_LOCATION: str = f"{APP_NAME}-{ENV}" if ENV != "prod" else APP_NAME
         DEFAULT_STORAGE = {
             "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
             "OPTIONS": {
-                "bucket_name": f"{GS_CREDENTIALS.project_id}.appspot.com",
-                "location": f"{APP_NAME}-{ENV}",
+                "bucket_name": FIREBASE_STORAGE_BUCKET,
+                "location": FIREBASE_STORAGE_LOCATION,
                 "credentials": GS_CREDENTIALS,
             },
         }
@@ -126,6 +130,8 @@ except FileNotFoundError:
         logger = getLogger(APP_NAME)
         logger.warning(f"Failed to load Google Firebase certificate: {e}")
         GOOGLE_FIREBASE_CERTIFICATE = {}
+        FIREBASE_STORAGE_BUCKET = ""
+        FIREBASE_STORAGE_LOCATION = ""
 
 # ------------------------------------------------------------------------------
 

@@ -49,8 +49,13 @@ def init_firebase():
     init firebase
     :return:
     """
-    cred = credentials.Certificate(settings.GOOGLE_FIREBASE_CERTIFICATE)
-    firebase_admin.initialize_app(cred)
+    credential = credentials.Certificate(settings.GOOGLE_FIREBASE_CERTIFICATE)
+    firebase_admin.initialize_app(
+        credential=credential,
+        options={
+            "storageBucket": settings.FIREBASE_STORAGE_BUCKET
+        }
+    )
 
 
 def get_application(mount_application) -> FastAPI:
