@@ -96,3 +96,15 @@ class AccountHandler:
         account.display_name = model.display_name
         await account.asave()
         return None
+
+    async def delete_account(self, account_id: uuid.UUID):
+        """
+        Delete account
+        :param account_id:
+        :return:
+        """
+        if account_id != self._api_context.account.id:
+            raise APIException(status_code=status.HTTP_403_FORBIDDEN, message="Forbidden")
+        account = await Account.objects.aget(id=account_id)
+        await account.adelete()
+        return None

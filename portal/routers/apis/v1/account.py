@@ -90,3 +90,22 @@ async def update_account(
     Update an account
     """
     await account_handler.update_account(account_id=account_id, model=model)
+
+
+@router.delete(
+    path="/{account_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[check_access_token],
+    description="For deleting an account"
+)
+@inject
+async def delete_account(
+    request: Request,
+    response: Response,
+    account_id: uuid.UUID,
+    account_handler: AccountHandler = Depends(Provide[Container.account_handler]),
+) -> None:
+    """
+    Delete an account
+    """
+    await account_handler.delete_account(account_id=account_id)

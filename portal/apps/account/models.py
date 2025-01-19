@@ -39,6 +39,19 @@ class Account(index.Indexed, UUIDModel):
     def __str__(self):
         return self.phone_number or self.email or self.google_uid
 
+    def delete(
+        self,
+        using=None,
+        *args,
+        soft=True,
+        **kwargs
+    ) -> tuple[int, dict[str, int]] | None:
+        if soft:
+            self.status = "inactive"
+            self.save()
+            return 1, {}
+        return super().delete(using=using, *args, **kwargs)
+
     class Meta:
         abstract = False
         db_table = "portal_account"

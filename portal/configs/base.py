@@ -165,6 +165,7 @@ INSTALLED_APPS = [
     # apps
     "portal.apps.account",
     "portal.apps.conference",
+    "portal.apps.faq",
     "portal.apps.home",
     "portal.apps.instructor",
     "portal.apps.language",

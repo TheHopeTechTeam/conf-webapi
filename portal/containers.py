@@ -5,6 +5,7 @@ from dependency_injector import containers, providers
 
 from portal.handlers import (
     AccountHandler,
+    FAQHandler,
     WorkshopHandler,
 )
 from portal.libs.database import RedisPool
@@ -25,6 +26,10 @@ class Container(containers.DeclarativeContainer):
     # [handlers]
     account_handler = providers.Factory(
         AccountHandler,
+        # redis=redis_pool
+    )
+    faq_handler = providers.Factory(
+        FAQHandler,
         # redis=redis_pool
     )
     workshop_handler = providers.Factory(
