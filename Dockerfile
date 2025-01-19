@@ -21,7 +21,7 @@ RUN cd /tmp  \
 #########
 # Runtime
 #########
-FROM python:3.11-alpine as runtime
+FROM python:3.11-alpine AS runtime
 
 RUN #apk add --no-cache binutils
 

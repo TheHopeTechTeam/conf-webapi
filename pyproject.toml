@@ -41,7 +41,7 @@ httpx = "*"
 ujson = "*"
 pytz = "^2024.1"
 pandas = "^2.2.3"
-phonenumbers = "^8.13.51"
+phonenumbers = "^8.13.53"
 python-dateutil = "^2.9.0.post0"
 python-multipart = "^0.0.20"
 
