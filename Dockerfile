@@ -7,7 +7,7 @@ RUN apk add --update --no-cache --virtual .build-deps build-base libffi-dev
 RUN python -m venv --copies /opt/venv
 
 ENV PATH="/opt/venv/bin:$PATH" \
-    POETRY_VERSION=2.0.0
+    POETRY_VERSION=1.7.1
 
 COPY poetry.lock pyproject.toml /tmp/
 
@@ -15,7 +15,7 @@ RUN pip install --upgrade pip \
   && pip install --no-cache-dir "poetry==$POETRY_VERSION"
 RUN cd /tmp  \
   && poetry config virtualenvs.create false \
-  && poetry install --without=dev --no-interaction --no-ansi \
+  && poetry install --no-dev --no-interaction --no-ansi \
   && rm -fr /tmp/poetry.lock /tmp/pyproject.toml
 
 #########
