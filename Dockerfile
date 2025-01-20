@@ -15,7 +15,7 @@ RUN pip install --upgrade pip \
   && pip install --no-cache-dir "poetry==$POETRY_VERSION"
 RUN cd /tmp  \
   && poetry config virtualenvs.create false \
-  && poetry install --without=dev --no-interaction --no-ansi \
+  && poetry install --without=dev --no-root --no-interaction --no-ansi \
   && rm -fr /tmp/poetry.lock /tmp/pyproject.toml
 
 #########
