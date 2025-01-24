@@ -2,6 +2,7 @@
 FileHandler
 """
 from datetime import timedelta
+from typing import Optional
 
 from django.conf import settings
 from django.core.cache import BaseCache, cache
@@ -18,7 +19,7 @@ class FileHandler:
     def __init__(self):
         self._cache: BaseCache = cache
 
-    async def get_file_url(self, image_id: int) -> str:
+    async def get_file_url(self, image_id: int) -> Optional[str]:
         """
         :param image_id:
         :return:
@@ -26,7 +27,10 @@ class FileHandler:
         cache_key = cache_keys.get_firebase_signed_url_key(image_id)
         if value := await self._cache.aget(cache_key):
             return value
-        image: Image = await Image.objects.aget(id=image_id)
+        try:
+            image: Image = await Image.objects.aget(id=image_id)
+        except Image.DoesNotExist:
+            return None
         bucket: Bucket = storage.bucket()
         blob: Blob = bucket.get_blob(f"{settings.FIREBASE_STORAGE_LOCATION}/{image.file.name}")
         signed_url = blob.generate_signed_url(
