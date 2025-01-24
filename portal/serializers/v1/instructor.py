@@ -12,6 +12,6 @@ class InstructorBase(UUIDBaseModel):
     """
     Instructor base model
     """
-    name: str = Field(..., title="Name")
-    bio: str = Field(..., title="Bio")
-    image_url: Optional[str] = Field(None, title="Image URL")
+    name: str = Field(..., description="Name")
+    bio: str = Field(..., description="Bio")
+    image_url: Optional[str] = Field(None, serialization_alias="imageUrl", description="Image URL")

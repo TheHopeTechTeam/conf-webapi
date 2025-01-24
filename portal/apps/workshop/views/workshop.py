@@ -43,7 +43,7 @@ class WorkshopModelAdmin(ModelAdmin):
     menu_label = "Workshops"
     menu_icon = "site"
 
-    list_display = ("title",)
+    list_display = ("title", "location", "time_slot")
     list_filter = ("location", "conference")
 
     search_fields = ("title", "location")
@@ -54,9 +54,11 @@ class WorkshopModelAdmin(ModelAdmin):
         FieldPanel("conference"),
         FieldPanel("location"),
         FieldPanel("instructor"),
-        FieldPanel("participants_limit"),
         FieldPanel("time_slot"),
+        FieldPanel("participants_limit"),
+        FieldPanel("image"),
         FieldPanel("description"),
+        FieldPanel("slido_url"),
     ]
 
     edit_handler = ObjectList(custom_panels)

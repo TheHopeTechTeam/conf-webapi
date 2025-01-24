@@ -15,3 +15,4 @@ class MenuOrder(IntEnum):
     Instructor = 104
     Workshop = 105
     Ticket = 106
+    FAQ = 107

@@ -10,8 +10,8 @@ from portal.schemas.mixins import UUIDBaseModel
 
 
 class LocationBase(UUIDBaseModel):
-    name: str = Field(..., title="Location name")
-    address: Optional[str] = Field(None, title="Location address")
-    floor: Optional[str] = Field(None, title="Location floor")
-    room_number: Optional[str] = Field(None, title="Location room number")
-    image_url: Optional[str] = Field(None, title="Location image URL")
+    name: str = Field(..., description="Location name")
+    address: Optional[str] = Field(None, description="Location address")
+    floor: Optional[str] = Field(None, description="Location floor")
+    room_number: Optional[str] = Field(None, serialization_alias="roomNumber", description="Location room number")
+    image_url: Optional[str] = Field(None, serialization_alias="imageUrl", description="Image URL")

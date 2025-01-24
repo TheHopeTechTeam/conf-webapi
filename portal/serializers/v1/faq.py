@@ -13,25 +13,25 @@ class FaqCategoryBase(UUIDBaseModel):
     """
     FAQ category base model
     """
-    name: str = Field(..., title="Name")
-    description: str = Field(..., title="Description")
+    name: str = Field(..., description="Name")
+    description: str = Field(..., description="Description")
 
 
 class FaqCategoryList(BaseModel):
     """
     FAQ category list model
     """
-    categories: list[FaqCategoryBase] = Field(..., title="Categories")
+    categories: list[FaqCategoryBase] = Field(..., description="Categories")
 
 
 class FaqBase(UUIDBaseModel):
     """
     FAQ base model
     """
-    category_id: uuid.UUID = Field(..., title="Category ID")
-    question: str = Field(..., title="Question")
-    answer: str = Field(..., title="Answer")
-    related_link: Optional[str] = Field(default=None, title="Related Link")
+    category_id: uuid.UUID = Field(..., serialization_alias="categoryId", description="Category ID")
+    question: str = Field(..., description="Question")
+    answer: str = Field(..., description="Answer")
+    related_link: Optional[str] = Field(default=None, serialization_alias="relatedLink", description="Related Link")
 
     @field_serializer("category_id")
     def serialize_category_id(self, value: uuid.UUID, _info) -> str:
@@ -48,4 +48,4 @@ class FaqList(BaseModel):
     """
     FAQ list model
     """
-    faqs: list[FaqBase] = Field(..., title="FAQs")
+    faqs: list[FaqBase] = Field(..., description="FAQs")

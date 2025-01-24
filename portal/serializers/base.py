@@ -1,9 +1,12 @@
 """
 Base serializers
 """
+from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
+
+from dateutil import parser
 
 
 class HeaderInfo(BaseModel):
@@ -11,6 +14,7 @@ class HeaderInfo(BaseModel):
     Header info
     """
     accept_language: Optional[str] = Field(default="en-US", alias="accept-language", description="Accept-Language")
+    date: Optional[datetime] = Field(default=datetime.now(), description="Date")
     # user_agent: Optional[str] = Field(..., description="User-Agent")
     # authorization: Optional[str] = Field(..., description="Authorization")
     # content_type: Optional[str] = Field(..., description="Content-Type")
@@ -30,3 +34,15 @@ class HeaderInfo(BaseModel):
     # referer: Optional[str] = Field(..., description="Referer")
     # accept_charset: Optional[str] = Field(..., description="Accept-Charset")
     # origin: Optional[str] = Field(..., description="Origin")
+
+    @field_serializer("date", return_type=Optional[datetime])
+    def date_serializer(cls, value: str) -> Optional[datetime]:
+        """
+
+        :param value:
+        :return:
+        """
+        try:
+            return parser.parse(value)
+        except Exception:
+            return None

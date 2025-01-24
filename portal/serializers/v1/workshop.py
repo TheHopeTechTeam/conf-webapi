@@ -18,8 +18,6 @@ class WorkshopBase(BaseModel):
     title: str = Field(..., description="Title")
     description: str = Field(..., description="Description")
     location: LocationBase = Field(..., description="Location")
-    start_datetime: datetime = Field(..., description="Start Date and Time")
-    end_datetime: datetime = Field(..., description="End Date and Time")
 
 
 class WorkshopDetail(WorkshopBase):
@@ -27,14 +25,42 @@ class WorkshopDetail(WorkshopBase):
     Workshop detail
     """
     # conference: str = Field(..., description="Conference")
+    start_datetime: datetime = Field(..., serialization_alias="startDatetime", description="Start Date and Time")
+    end_datetime: datetime = Field(..., serialization_alias="endDatetime", description="End Date and Time")
     instructor: InstructorBase = Field(..., description="Instructor")
-    participants_limit: int = Field(..., description="Participants Limit")
-    is_full: bool = Field(..., description="The number of participants has reached the upper limit")
+    participants_limit: int = Field(..., serialization_alias="participantsLimit", description="Participants Limit")
+    is_full: bool = Field(..., serialization_alias="isFull", description="The number of participants has reached the upper limit")
+    image_url: str = Field(..., serialization_alias="imageUrl", description="Image URL")
+    slido_url: str = Field(..., serialization_alias="slidoUrl", description="Slido URL")
 
 
-
-class WorkshopList(BaseModel):
+class WorkshopRegistered(WorkshopBase):
     """
-    Workshop list
+    Workshop registered
     """
+    start_datetime: datetime = Field(..., serialization_alias="startDatetime", description="Start Date and Time")
+    end_datetime: datetime = Field(..., serialization_alias="endDatetime", description="End Date and Time")
+    is_registered: bool = Field(..., serialization_alias="isRegistered", description="Is registered")
+
+
+class WorkshopRegisteredList(BaseModel):
+    """
+    Workshop registered list
+    """
+    workshops: list[WorkshopRegistered] = Field(..., description="Workshops")
+
+
+class WorkshopSchedule(BaseModel):
+    """
+    Workshop schedule
+    """
+    start_datetime: datetime = Field(..., serialization_alias="startDatetime", description="Start Date and Time")
+    end_datetime: datetime = Field(..., serialization_alias="endDatetime", description="End Date and Time")
     workshops: list[WorkshopBase] = Field(..., description="Workshops")
+
+
+class WorkshopScheduleList(BaseModel):
+    """
+    Workshop schedule
+    """
+    schedule: list[WorkshopSchedule] = Field(..., description="Schedule")

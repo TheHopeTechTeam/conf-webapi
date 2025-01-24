@@ -1,11 +1,9 @@
 """
 Workshop API Router
 """
-import random
 import uuid
 from typing import Annotated
 
-from dateutil import parser
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Request, Response, Depends
 from fastapi.params import Header
@@ -19,9 +17,8 @@ from portal.libs.depends import (
 )
 from portal.route_classes import LogRoute
 from portal.serializers.base import HeaderInfo
-from portal.serializers.v1.instructor import InstructorBase
-from portal.serializers.v1.workshop import WorkshopDetail, WorkshopList, WorkshopBase
 from portal.serializers.response_examples import workshop
+from portal.serializers.v1.workshop import WorkshopDetail, WorkshopScheduleList, WorkshopRegisteredList
 
 router = APIRouter(
     dependencies=[
@@ -30,24 +27,15 @@ router = APIRouter(
     route_class=LogRoute
 )
 
-fri_first_st = parser.parse("2025-05-02T14:00:00+08:00")
-fri_first_et = parser.parse("2025-05-02T15:20:00+08:00")
-fri_second_st = parser.parse("2025-05-02T15:20:00+08:00")
-fri_second_et = parser.parse("2025-05-02T16:40:00+08:00")
-sat_first_st = parser.parse("2025-05-03T14:00:00+08:00")
-sat_first_et = parser.parse("2025-05-03T15:20:00+08:00")
-sat_second_st = parser.parse("2025-05-03T15:20:00+08:00")
-sat_second_et = parser.parse("2025-05-03T16:40:00+08:00")
-
 
 @router.get(
     path="/schedules",
-    response_model=dict[str, dict[str, list[WorkshopBase]]],
+    response_model=WorkshopScheduleList,
     status_code=status.HTTP_200_OK,
     responses=workshop.WORKSHOP_LIST
 )
 @inject
-async def get_workshop_schedules(
+async def get_workshop_schedule_list(
     request: Request,
     response: Response,
     headers: Annotated[HeaderInfo, Header()],
@@ -62,7 +50,7 @@ async def get_workshop_schedules(
     :return:
     """
     response.headers["Content-Language"] = headers.accept_language
-    workshop_obj = await workshop_handler.get_workshop_schedules()
+    workshop_obj = await workshop_handler.get_workshop_schedule_list()
     return workshop_obj
 
 
@@ -116,12 +104,14 @@ async def get_workshop_detail(
 async def get_registered_workshops(
     request: Request,
     response: Response,
+    headers: Annotated[HeaderInfo, Header()],
     workshop_handler: WorkshopHandler = Depends(Provide[Container.workshop_handler]),
 ) -> dict[str, bool]:
     """
 
     :param request:
     :param response:
+    :param headers:
     :param workshop_handler:
     :return:
     """
@@ -137,6 +127,7 @@ async def get_registered_workshops(
 async def register_workshop(
     request: Request,
     response: Response,
+    headers: Annotated[HeaderInfo, Header()],
     workshop_id: uuid.UUID,
     workshop_handler: WorkshopHandler = Depends(Provide[Container.workshop_handler]),
 ) -> None:
@@ -144,6 +135,7 @@ async def register_workshop(
 
     :param request:
     :param response:
+    :param headers:
     :param workshop_id:
     :param workshop_handler:
     :return:
@@ -160,6 +152,7 @@ async def register_workshop(
 async def unregister_workshop(
     request: Request,
     response: Response,
+    headers: Annotated[HeaderInfo, Header()],
     workshop_id: uuid.UUID,
     workshop_handler: WorkshopHandler = Depends(Provide[Container.workshop_handler]),
 ) -> None:
@@ -167,8 +160,34 @@ async def unregister_workshop(
 
     :param request:
     :param response:
+    :param headers:
     :param workshop_id:
     :param workshop_handler:
     :return:
     """
     await workshop_handler.unregister_workshop(workshop_id=workshop_id)
+
+
+@router.get(
+    path="/my_workshops",
+    status_code=status.HTTP_200_OK,
+    response_model=WorkshopRegisteredList,
+    dependencies=[check_access_token],
+)
+@inject
+async def get_my_workshops(
+    request: Request,
+    response: Response,
+    headers: Annotated[HeaderInfo, Header()],
+    workshop_handler: WorkshopHandler = Depends(Provide[Container.workshop_handler]),
+) -> WorkshopRegisteredList:
+    """
+
+    :param request:
+    :param response:
+    :param headers:
+    :param workshop_handler:
+    :return:
+    """
+    return await workshop_handler.get_my_workshops()
+

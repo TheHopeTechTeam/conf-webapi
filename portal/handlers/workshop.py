@@ -5,7 +5,6 @@ import uuid
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from dateutil import parser
 from django.core.cache import BaseCache, cache
 
 from portal.apps.account.models import Account
@@ -13,67 +12,73 @@ from portal.apps.instructor.models import Instructor
 from portal.apps.location.models import Location
 from portal.apps.workshop.models import WorkshopTimeSlot, Workshop, WorkshopRegistration
 from portal.exceptions.api_base import APIException
+from portal.handlers import FileHandler
 from portal.libs.contexts.api_context import APIContext, get_api_context
 from portal.serializers.v1.instructor import InstructorBase
 from portal.serializers.v1.location import LocationBase
-from portal.serializers.v1.workshop import WorkshopList, WorkshopBase, WorkshopDetail
+from portal.serializers.v1.workshop import (
+    WorkshopBase,
+    WorkshopDetail,
+    WorkshopSchedule,
+    WorkshopScheduleList,
+    WorkshopRegistered,
+    WorkshopRegisteredList
+)
 
 
 class WorkshopHandler:
     """WorkshopHandler"""
 
-    def __init__(self):
+    def __init__(
+        self,
+        file_handler: FileHandler,
+    ):
+        self._file_handler = file_handler
         try:
             self._api_context: APIContext = get_api_context()
         except Exception:
             self._api_context = None
         self._cache: BaseCache = cache
 
-    async def get_workshop_schedules(self) -> dict:
+    async def get_workshop_schedule_list(self) -> WorkshopScheduleList:
         """
         Get the workshop list
 
         :return:
         """
-        workshop_schedule = {}
-        workshop_time_slots = WorkshopTimeSlot.objects.filter(
-            is_removed=False,
-            start_datetime__gte=parser.parse("2025-05-01T16:00:00Z"),  # temporary hard-coded date
-            end_datetime__lte=parser.parse("2025-05-03T16:00:00Z")  # temporary hard-coded date
-        ).all()
-        workshop_time_slot_ids = [workshop_time_slot.id async for workshop_time_slot in workshop_time_slots]
-        workshops = Workshop.objects.filter(
-            time_slot_id__in=workshop_time_slot_ids,
-            is_removed=False
-        ).all()
-        async for workshop in workshops:
-            time_slot_obj: WorkshopTimeSlot = await WorkshopTimeSlot.objects.aget(id=workshop.time_slot_id)  # type: ignore
-            location: Location = await Location.objects.aget(id=workshop.location_id)  # type: ignore
-            start_datetime_with_tz = time_slot_obj.start_datetime.astimezone(tz=ZoneInfo(time_slot_obj.time_zone))
-            end_datetime_with_tz = time_slot_obj.end_datetime.astimezone(tz=ZoneInfo(time_slot_obj.time_zone))
-            start_date = start_datetime_with_tz.strftime("%Y%m%d")
-            start_time = start_datetime_with_tz.strftime("%H%M")
-            if start_date not in workshop_schedule:
-                workshop_schedule[start_date] = {}
-            if start_time not in workshop_schedule[start_date]:
-                workshop_schedule[start_date][start_time] = []
-            workshop_schedule[start_date][start_time].append(
-                WorkshopBase(
-                    id=workshop.id,
-                    title=workshop.title,
-                    description=workshop.description,
-                    location=LocationBase(
-                        id=location.id,
-                        name=location.name,
-                        address=location.address,
-                        floor=location.floor,
-                        room_number=location.room_number
-                    ),
-                    start_datetime=start_datetime_with_tz,
-                    end_datetime=end_datetime_with_tz
+        workshop_schedules = []
+        workshop_time_slots = WorkshopTimeSlot.objects.filter(is_removed=False).all()
+        async for workshop_time_slot in workshop_time_slots:
+            workshops = Workshop.objects.filter(
+                time_slot=workshop_time_slot,
+                is_removed=False
+            ).all()
+            workshop_list = []
+            async for workshop in workshops:
+                location: Location = await Location.objects.aget(id=workshop.location_id)
+                workshop_list.append(
+                    WorkshopBase(
+                        id=workshop.id,
+                        title=workshop.title,
+                        description=workshop.description,
+                        location=LocationBase(
+                            id=location.id,
+                            name=location.name,
+                            address=location.address,
+                            floor=location.floor,
+                            room_number=location.room_number
+                        )
+                    )
+                )
+            workshop_schedules.append(
+                WorkshopSchedule(
+                    start_datetime=workshop_time_slot.start_datetime.astimezone(tz=ZoneInfo(workshop_time_slot.time_zone)),
+                    end_datetime=workshop_time_slot.end_datetime.astimezone(tz=ZoneInfo(workshop_time_slot.time_zone)),
+                    workshops=workshop_list
                 )
             )
-        return workshop_schedule
+
+        return WorkshopScheduleList(schedule=workshop_schedules)
 
     async def get_workshop_detail(self, workshop_id: uuid.UUID) -> WorkshopDetail:
         """
@@ -97,17 +102,21 @@ class WorkshopHandler:
                 name=location.name,
                 address=location.address,
                 floor=location.floor,
-                room_number=location.room_number
+                room_number=location.room_number,
+                image_url=await self._file_handler.get_file_url(image_id=location.image_id)
             ),
             start_datetime=start_datetime_with_tz,
             end_datetime=end_datetime_with_tz,
             instructor=InstructorBase(
                 id=instructor.id,
                 name=instructor.name,
-                bio=instructor.bio
+                bio=instructor.bio,
+                image_url=await self._file_handler.get_file_url(image_id=instructor.image_id)
             ),
             participants_limit=workshop.participants_limit,
-            is_full=workshop.participants_limit <= await self.get_workshop_participants_count(workshop_id=workshop_id)
+            is_full=workshop.participants_limit <= await self.get_workshop_participants_count(workshop_id=workshop_id),
+            image_url=await self._file_handler.get_file_url(image_id=workshop.image_id),
+            slido_url=workshop.slido_url
         )
 
     async def check_has_registered_at_timeslot(self, workshop: Workshop) -> bool:
@@ -201,3 +210,41 @@ class WorkshopHandler:
             is_removed=False
         ).acount()
 
+    async def get_my_workshops(self) -> WorkshopRegisteredList:
+        """
+        Get my workshops
+
+        :return:
+        """
+        account: Account = self._api_context.account
+        workshop_registrations = WorkshopRegistration.objects.filter(
+            account=account,
+            is_removed=False,
+            unregistered_at=None
+        ).all()
+        my_workshops = []
+        async for workshop_registration in workshop_registrations:
+            workshop: Workshop = await Workshop.objects.aget(id=workshop_registration.workshop_id)
+            location: Location = await Location.objects.aget(id=workshop.location_id)
+            time_slot_obj: WorkshopTimeSlot = await WorkshopTimeSlot.objects.aget(id=workshop.time_slot_id)
+            start_datetime_with_tz = time_slot_obj.start_datetime.astimezone(tz=ZoneInfo(time_slot_obj.time_zone))
+            end_datetime_with_tz = time_slot_obj.end_datetime.astimezone(tz=ZoneInfo(time_slot_obj.time_zone))
+            my_workshops.append(
+                WorkshopRegistered(
+                    id=workshop.id,
+                    title=workshop.title,
+                    description=workshop.description,
+                    location=LocationBase(
+                        id=location.id,
+                        name=location.name,
+                        address=location.address,
+                        floor=location.floor,
+                        room_number=location.room_number
+                    ),
+                    start_datetime=start_datetime_with_tz,
+                    end_datetime=end_datetime_with_tz,
+                    is_registered=True
+                )
+            )
+
+        return WorkshopRegisteredList(workshops=my_workshops)

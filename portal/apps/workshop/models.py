@@ -8,6 +8,7 @@ from auditlog.registry import auditlog
 from django.db import models
 from model_utils.models import UUIDModel, SoftDeletableModel
 from wagtail.admin.forms.account import _get_time_zone_choices  # noqa
+from wagtail.images.models import Image
 from wagtail.search import index
 
 
@@ -56,6 +57,14 @@ class Workshop(index.Indexed, UUIDModel, SoftDeletableModel):
     participants_limit = models.PositiveBigIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     time_slot = models.ForeignKey(WorkshopTimeSlot, on_delete=models.SET_NULL, null=True)
+    slido_url = models.URLField(null=True, blank=True)
+    image = models.ForeignKey(
+        Image,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
 
     def __str__(self):
         return self.title
