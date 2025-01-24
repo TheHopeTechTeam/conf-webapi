@@ -2,6 +2,7 @@
 Workshop serializers
 """
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -30,8 +31,8 @@ class WorkshopDetail(WorkshopBase):
     instructor: InstructorBase = Field(..., description="Instructor")
     participants_limit: int = Field(..., serialization_alias="participantsLimit", description="Participants Limit")
     is_full: bool = Field(..., serialization_alias="isFull", description="The number of participants has reached the upper limit")
-    image_url: str = Field(..., serialization_alias="imageUrl", description="Image URL")
-    slido_url: str = Field(..., serialization_alias="slidoUrl", description="Slido URL")
+    image_url: Optional[str] = Field(default=None, serialization_alias="imageUrl", description="Image URL")
+    slido_url: Optional[str] = Field(default=None, serialization_alias="slidoUrl", description="Slido URL")
 
 
 class WorkshopRegistered(WorkshopBase):
