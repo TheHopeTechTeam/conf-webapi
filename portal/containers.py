@@ -8,7 +8,9 @@ from portal.handlers import (
     ConferenceHandler,
     EventInfoHandler,
     FAQHandler,
+    FeedbackHandler,
     FileHandler,
+    TestimonyHandler,
     WorkshopHandler,
 )
 from portal.libs.database import RedisPool
@@ -44,6 +46,8 @@ class Container(containers.DeclarativeContainer):
         FAQHandler,
         # redis=redis_pool
     )
+    feedback_handler = providers.Factory(FeedbackHandler)
+    testimony_handler = providers.Factory(TestimonyHandler)
     workshop_handler = providers.Factory(
         WorkshopHandler,
         file_handler=file_handler
