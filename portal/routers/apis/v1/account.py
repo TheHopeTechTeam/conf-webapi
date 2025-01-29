@@ -56,6 +56,7 @@ async def get_account(
 ) -> AccountDetail:
     """
     Get an account
+    # TODO: Implement the actual logic
     """
     ticket_numbers = [str(f"TH{random.randint(100000, 999999)}") for _ in range(3)]
     ticket_types = ["REGULAR", "CREATIVE", "ALL ACCESS", "LEADERSHIP"]

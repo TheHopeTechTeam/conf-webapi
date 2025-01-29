@@ -110,6 +110,7 @@ class WorkshopHandler:
             instructor=InstructorBase(
                 id=instructor.id,
                 name=instructor.name,
+                title=instructor.title,
                 bio=instructor.bio,
                 image_url=await self._file_handler.get_file_url(image_id=instructor.image_id)
             ),

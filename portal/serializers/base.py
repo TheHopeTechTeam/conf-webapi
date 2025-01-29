@@ -4,17 +4,17 @@ Base serializers
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field, field_serializer
+from pydantic import BaseModel, Field, field_validator
 
 from dateutil import parser
 
 
 class HeaderInfo(BaseModel):
     """
-    Header info
+    Header information
     """
     accept_language: Optional[str] = Field(default="en-US", alias="accept-language", description="Accept-Language")
-    date: Optional[datetime] = Field(default=datetime.now(), description="Date")
+    date: Optional[datetime] = Field(default=datetime.now().strftime("%a, %d %b %Y %H:%M:%S GMT"), description="Date")
     # user_agent: Optional[str] = Field(..., description="User-Agent")
     # authorization: Optional[str] = Field(..., description="Authorization")
     # content_type: Optional[str] = Field(..., description="Content-Type")
@@ -35,7 +35,7 @@ class HeaderInfo(BaseModel):
     # accept_charset: Optional[str] = Field(..., description="Accept-Charset")
     # origin: Optional[str] = Field(..., description="Origin")
 
-    @field_serializer("date", return_type=Optional[datetime])
+    @field_validator("date", mode="before")
     def date_serializer(cls, value: str) -> Optional[datetime]:
         """
 

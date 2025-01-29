@@ -9,9 +9,16 @@ from starlette import status
 
 from portal.containers import Container
 from portal.handlers import FAQHandler
+from portal.libs.depends import DEFAULT_RATE_LIMITERS
+from portal.route_classes import LogRoute
 from portal.serializers.v1.faq import FaqCategoryBase, FaqCategoryList, FaqBase, FaqList
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[
+        *DEFAULT_RATE_LIMITERS
+    ],
+    route_class=LogRoute
+)
 
 
 @router.get(

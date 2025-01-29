@@ -16,6 +16,7 @@ class Conference(index.Indexed, UUIDModel, SoftDeletableModel):
     end_date = models.DateField()
     location = models.ForeignKey('location.Location', on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    instructors = models.ManyToManyField('instructor.Instructor', related_name="conference_instructors")
 
     def __str__(self):
         return self.title
@@ -38,5 +39,6 @@ class Conference(index.Indexed, UUIDModel, SoftDeletableModel):
             self.save()
             return 1, {}
         return super().delete(using=using, *args, **kwargs)
+
 
 auditlog.register(Conference)

@@ -165,12 +165,15 @@ INSTALLED_APPS = [
     # apps
     "portal.apps.account",
     "portal.apps.conference",
+    "portal.apps.event_info",
     "portal.apps.faq",
+    "portal.apps.feedback",
     "portal.apps.home",
     "portal.apps.instructor",
     "portal.apps.language",
     "portal.apps.location",
     "portal.apps.search",
+    "portal.apps.testimony",
     "portal.apps.ticket",
     "portal.apps.workshop"
     # apps end

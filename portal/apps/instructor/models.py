@@ -11,6 +11,7 @@ from wagtail.images.models import Image
 
 class Instructor(UUIDModel, SoftDeletableModel):
     name = models.CharField(max_length=255)
+    title = models.CharField(null=True, blank=True, max_length=255)
     bio = models.TextField()
     image = models.ForeignKey(
         Image,

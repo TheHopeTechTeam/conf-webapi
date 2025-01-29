@@ -1,6 +1,7 @@
 """
 Instructor Wagtail Hooks
 """
+from wagtail.admin.panels import FieldPanel, ObjectList
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
 from .models import Instructor
@@ -19,3 +20,12 @@ class InstructorModelAdmin(ModelAdmin):
     list_display = ("name", "bio")
     search_fields = ("name", "bio")
     ordering = ["name"]
+
+    custom_panels = [
+        FieldPanel("name"),
+        FieldPanel("title"),
+        FieldPanel("bio"),
+        FieldPanel("image"),
+    ]
+
+    edit_handler = ObjectList(custom_panels)

@@ -2,6 +2,7 @@
 This module contains the models for the FAQ app.
 """
 from django.db import models
+from auditlog.registry import auditlog
 
 from model_utils.models import UUIDModel, SoftDeletableModel
 from wagtail.models import Orderable
@@ -71,3 +72,6 @@ class Faq(UUIDModel, SoftDeletableModel, Orderable):
             self.save()
             return 1, {}
         return super().delete(using=using, *args, **kwargs)
+
+
+auditlog.register(FaqCategory)

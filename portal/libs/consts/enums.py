@@ -11,8 +11,9 @@ class MenuOrder(IntEnum):
     Account = 100
     Language = 101
     Conference = 102
-    Location = 103
-    Instructor = 104
-    Workshop = 105
-    Ticket = 106
-    FAQ = 107
+    EventInfo = 103
+    Location = 104
+    Instructor = 105
+    Workshop = 106
+    Ticket = 107
+    FAQ = 108
