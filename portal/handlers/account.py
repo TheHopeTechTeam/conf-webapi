@@ -66,7 +66,7 @@ class AccountHandler:
         account_exists = await AccountAuthProvider.objects.filter(provider_id=token_payload.user_id).aexists()
         now = datetime.now(tz=pytz.UTC)
         if account_exists:
-            auth_provider_obj: AccountAuthProvider = await AccountAuthProvider.objects.aget(google_uid=token_payload.user_id)
+            auth_provider_obj: AccountAuthProvider = await AccountAuthProvider.objects.aget(provider_id=token_payload.user_id)
             account: Account = await Account.objects.aget(id=auth_provider_obj.account_id)
             account.verified = True
             account.last_login = now
