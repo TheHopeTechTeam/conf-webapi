@@ -1,7 +1,6 @@
 """
 Workshop Time Slot Model Admin
 """
-from argparse import ZERO_OR_MORE
 from zoneinfo import ZoneInfo
 
 from django.contrib import admin

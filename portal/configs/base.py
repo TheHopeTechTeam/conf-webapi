@@ -93,13 +93,13 @@ CSRF_TRUSTED_ORIGINS: list = env_csrf_trusted_origins.split(",") if env_csrf_tru
 DEFAULT_STORAGE = {
     "BACKEND": "django.core.files.storage.FileSystemStorage",
 }
-FIREBASE_STORAGE_LOCATION: str = APP_NAME
 try:
     path = "env/google_certificate.json"
     google_certificate_path: PosixPath = Path(path)
     GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
     GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
     FIREBASE_STORAGE_BUCKET: str = f"{GS_CREDENTIALS.project_id}.appspot.com"
+    FIREBASE_STORAGE_LOCATION: str = f"{APP_NAME}-{ENV}" if ENV != "prod" else APP_NAME
     DEFAULT_STORAGE = {
         "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
         "OPTIONS": {
@@ -115,6 +115,7 @@ except FileNotFoundError:
         GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
         GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
         FIREBASE_STORAGE_BUCKET: str = f"{GS_CREDENTIALS.project_id}.appspot.com"
+        FIREBASE_STORAGE_LOCATION: str = f"{APP_NAME}-{ENV}" if ENV != "prod" else APP_NAME
         DEFAULT_STORAGE = {
             "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
             "OPTIONS": {
@@ -130,6 +131,7 @@ except FileNotFoundError:
         logger.warning(f"Failed to load Google Firebase certificate: {e}")
         GOOGLE_FIREBASE_CERTIFICATE = {}
         FIREBASE_STORAGE_BUCKET = ""
+        FIREBASE_STORAGE_LOCATION = ""
 
 # ------------------------------------------------------------------------------
 

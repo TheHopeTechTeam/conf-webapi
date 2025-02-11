@@ -1,11 +1,12 @@
 """
 Event Info Wagtail Hooks
 """
-from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
+from django.utils.html import format_html
 from wagtail.admin.panels import FieldPanel, ObjectList
+from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
-from .models import EventSchedule
 from portal.libs.consts.enums import MenuOrder
+from .models import EventSchedule
 
 
 @modeladmin_register
@@ -37,6 +38,15 @@ class EventScheduleModelAdmin(ModelAdmin):
         FieldPanel("title"),
         FieldPanel("description"),
         FieldPanel("start_time"),
+        FieldPanel(
+            field_name="color",
+            # widget=widgets.
+            help_text=format_html(
+                "Color in hex format. e.g. #FFFFFF for white. "
+                "Visit <a href='https://www.w3schools.com/colors/colors_picker.asp' target='_blank'>HTML Color Picker</a> for choosing a color."
+            ),
+            attrs={"placeholder": "#FFFFFF"},
+        ),
     ]
 
     edit_handler = ObjectList(custom_panels)

@@ -75,7 +75,7 @@ async def upload_csv(
 
 async def create_or_get_firebase_user(phone_number: str):
     """
-
+    if is wrong number try to use 02 2345 6789
     :param phone_number:
     :return:
     """

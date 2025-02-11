@@ -1,12 +1,9 @@
 """
 Account serializers
 """
-from datetime import datetime
-from typing import Optional
-from uuid import UUID
-
 from pydantic import BaseModel, Field
 
+from portal.libs.consts.enums import LoginMethod
 from portal.schemas.mixins import UUIDBaseModel
 
 
@@ -14,15 +11,10 @@ class AccountLogin(BaseModel):
     """
     Account login
     """
-    created_at: Optional[datetime] = Field(
-        default=None,
-        serialization_alias="createdAt",
-        description="(Optional) Created at"
-    )
-    app_name: str = Field(
-        default="DEFAULT",
-        serialization_alias="appName",
-        description="(Optional) App name"
+    login_method: LoginMethod = Field(
+        default=LoginMethod.FIREBASE,
+        serialization_alias="loginMethod",
+        description="Login method"
     )
     firebase_token: str = Field(
         ...,

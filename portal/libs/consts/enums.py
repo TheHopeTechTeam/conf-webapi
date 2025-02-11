@@ -1,7 +1,7 @@
 """
 Enums for the application
 """
-from enum import IntEnum
+from enum import Enum, IntEnum
 
 
 class MenuOrder(IntEnum):
@@ -17,3 +17,28 @@ class MenuOrder(IntEnum):
     Workshop = 106
     Ticket = 107
     FAQ = 108
+
+
+class LoginMethod(Enum):
+    """
+    Login method
+    """
+    # PASSWORD = "password"
+    # GOOGLE = "google"
+    # FACEBOOK = "facebook"
+    # APPLE = "apple"
+    FIREBASE = "firebase"
+
+class Provider(Enum):
+    """
+    Provider
+    """
+    FIREBASE = "firebase"
+
+    @classmethod
+    def choices(cls):
+        """
+
+        :return:
+        """
+        return [(key.value, key.name) for key in cls]

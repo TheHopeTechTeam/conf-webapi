@@ -3,16 +3,18 @@ AccountHandler
 """
 import uuid
 from datetime import datetime
-from typing import Optional
 
 import pytz
+from django.db import IntegrityError
 from fastapi.security.utils import get_authorization_scheme_param
 from starlette import status
 
-from portal.apps.account.models import Account
+from portal.apps.account.models import Account, AccountAuthProvider
 from portal.exceptions.api_base import APIException
 from portal.handlers import AuthHandler
+from portal.libs.consts.enums import Provider, LoginMethod
 from portal.libs.contexts.api_context import get_api_context, APIContext
+from portal.libs.logger import logger
 from portal.schemas.auth import FirebaseTokenPayload
 from portal.serializers.v1.account import AccountLogin, AccountUpdate, LoginResponse
 
@@ -22,7 +24,10 @@ class AccountHandler:
 
     def __init__(self):
         """initialize"""
-        self._api_context: APIContext = get_api_context()
+        try:
+            self._api_context: APIContext = get_api_context()
+        except Exception:
+            self._api_context = None
 
     @staticmethod
     async def verify_login_token(token: str) -> FirebaseTokenPayload:
@@ -36,6 +41,7 @@ class AccountHandler:
         try:
             return await auth_handler.verify_firebase_token(token=credentials)
         except Exception as e:
+            logger.error(f"Error verifying token: {e}")
             raise APIException(status_code=status.HTTP_401_UNAUTHORIZED, message="Unauthorized")
 
     async def login(self, model: AccountLogin) -> LoginResponse:
@@ -44,20 +50,60 @@ class AccountHandler:
         :param model:
         :return:
         """
-        token_payload = await self.verify_login_token(model.firebase_token)
-        if account := await Account.objects.aget(google_uid=token_payload.user_id):
-            account.last_login = datetime.now(tz=pytz.UTC)
+        match model.login_method:
+            case LoginMethod.FIREBASE:
+                return await self.firebase_login(model=model)
+            case _:
+                raise APIException(status_code=status.HTTP_400_BAD_REQUEST, message="Invalid login method")
+
+    async def firebase_login(self, model: AccountLogin) -> LoginResponse:
+        """
+        Firebase login
+        :param model:
+        :return:
+        """
+        token_payload: FirebaseTokenPayload = await self.verify_login_token(model.firebase_token)
+        account_exists = await AccountAuthProvider.objects.filter(provider_id=token_payload.user_id).aexists()
+        now = datetime.now(tz=pytz.UTC)
+        if account_exists:
+            auth_provider_obj: AccountAuthProvider = await AccountAuthProvider.objects.aget(google_uid=token_payload.user_id)
+            account: Account = await Account.objects.aget(id=auth_provider_obj.account_id)
+            account.verified = True
+            account.last_login = now
             await account.asave()
             return LoginResponse(id=account.id, verified=True)
-        account_obj: Account = await Account.objects.acreate(
-            google_uid=token_payload.user_id,
-            phone_number=token_payload.phone_number,
-            auth_provider=token_payload.firebase.sign_in_provider,
-            status="active",
-            created_at=model.created_at or datetime.now(tz=pytz.UTC),
-            last_login=datetime.now(tz=pytz.UTC),
-            app_name=model.app_name,
-        )
+        try:
+            account_obj: Account = await Account.objects.acreate(
+                phone_number=token_payload.phone_number,
+                is_active=True,
+                verified=True,
+                last_login=now,
+            )
+        except IntegrityError as e:
+            if f"Key (phone_number)=({token_payload.phone_number}) already exists." not in str(e):
+                logger.error(f"Error creating account: {e}")
+                raise APIException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, message="Internal Server Error")
+            account_obj: Account = await Account.objects.aget(phone_number=token_payload.phone_number)
+            account_obj.verified = True
+            account_obj.last_login = now
+            await account_obj.asave()
+        except Exception as e:
+            logger.error(f"Error creating account: {e}")
+            raise APIException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, message="Internal Server Error")
+
+        try:
+            await AccountAuthProvider.objects.acreate(
+                account=account_obj,
+                provider=Provider.FIREBASE.value,
+                provider_id=token_payload.user_id,
+                extra_data=token_payload.model_dump(
+                    exclude={"name", "email", "phone_number", "exp", "iat", "user_id"}
+                )
+            )
+        except Exception as e:
+            logger.error(f"Error creating account provider: {e}")
+            await account_obj.adelete(soft=False)
+            raise APIException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, message="Internal Server Error")
         return LoginResponse(id=account_obj.id, verified=True, first_login=True)
 
     async def check_first_login(self, uid: str):
@@ -68,19 +114,6 @@ class AccountHandler:
         """
         # account = await self.get_account(uid=uid)
         # return user.metadata.creation_timestamp == user.metadata.last_sign_in_timestamp
-
-    async def get_account(self, uid: str):
-        """
-        Get user
-        :param uid:
-        :return:
-        """
-        if uid != self._api_context.uid:
-            raise APIException(status_code=status.HTTP_403_FORBIDDEN, message="Forbidden")
-        if account := self._api_context.account:
-            return account
-        account = await Account.objects.aget(google_uid=uid)
-        return account
 
     async def update_account(self, account_id: uuid.UUID, model: AccountUpdate):
         """
