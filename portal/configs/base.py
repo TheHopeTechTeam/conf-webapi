@@ -47,6 +47,12 @@ DEBUG = env("DEBUG")
 
 APP_NAME: str = "conf-webapi"
 
+# [AWS]
+AWS_ACCESS_KEY_ID: str = env("AWS_ACCESS_KEY_ID", default="")
+AWS_SECRET_ACCESS_KEY: str = env("AWS_SECRET_ACCESS_KEY", default="")
+AWS_STORAGE_BUCKET_NAME: str = APP_NAME
+AWS_S3_REGION_NAME: str = env("AWS_S3_REGION_NAME", default="")
+
 REDIS_URL: str = env(var="REDIS_URL", default="redis://localhost:6379/0")
 CACHES = {
     "default": {
@@ -68,70 +74,12 @@ DATABASE_USER: str = env("DATABASE_USER", default="postgres")
 DATABASE_PASSWORD: str = env("DATABASE_PASSWORD", default="")
 DATABASE_PORT: str = env("DATABASE_PORT", default="5432")
 DATABASE_NAME: str = env("DATABASE_NAME", default="postgres")
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "HOST": DATABASE_HOST,
-        "NAME": DATABASE_NAME,
-        "PASSWORD": DATABASE_PASSWORD,
-        "PORT": f"{DATABASE_PORT}",
-        "USER": DATABASE_USER,
-        "TEST": {
-            "NAME": DATABASE_NAME
-        }
-    }
-}
 
 # [Django]
 # [[Cross Site Request Forgery]]
 env_csrf_trusted_origins = env("CSRF_TRUSTED_ORIGINS", default=None)
 CSRF_COOKIE_DOMAIN: str = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS: list = env_csrf_trusted_origins.split(",") if env_csrf_trusted_origins else []
-
-# [Google Cloud]
-## Set the default storage settings if the Google Cloud credentials are available using the GOOGLE_APPLICATION_CREDENTIALS environment variable.
-DEFAULT_STORAGE = {
-    "BACKEND": "django.core.files.storage.FileSystemStorage",
-}
-try:
-    path = "env/google_certificate.json"
-    google_certificate_path: PosixPath = Path(path)
-    GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
-    GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
-    FIREBASE_STORAGE_BUCKET: str = f"{GS_CREDENTIALS.project_id}.appspot.com"
-    FIREBASE_STORAGE_LOCATION: str = f"{APP_NAME}-{ENV}" if ENV != "prod" else APP_NAME
-    DEFAULT_STORAGE = {
-        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
-        "OPTIONS": {
-            "bucket_name": FIREBASE_STORAGE_BUCKET,
-            "location": FIREBASE_STORAGE_LOCATION,
-            "credentials": GS_CREDENTIALS,
-        },
-    }
-except FileNotFoundError:
-    path = "/etc/secrets/google_certificate.json"
-    google_certificate_path: PosixPath = Path(path)
-    try:
-        GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
-        GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
-        FIREBASE_STORAGE_BUCKET: str = f"{GS_CREDENTIALS.project_id}.appspot.com"
-        FIREBASE_STORAGE_LOCATION: str = f"{APP_NAME}-{ENV}" if ENV != "prod" else APP_NAME
-        DEFAULT_STORAGE = {
-            "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
-            "OPTIONS": {
-                "bucket_name": FIREBASE_STORAGE_BUCKET,
-                "location": FIREBASE_STORAGE_LOCATION,
-                "credentials": GS_CREDENTIALS,
-            },
-        }
-    except Exception as e:
-        from logging import getLogger
-
-        logger = getLogger(APP_NAME)
-        logger.warning(f"Failed to load Google Firebase certificate: {e}")
-        GOOGLE_FIREBASE_CERTIFICATE = {}
-        FIREBASE_STORAGE_BUCKET = ""
-        FIREBASE_STORAGE_LOCATION = ""
 
 # ------------------------------------------------------------------------------
 
@@ -225,6 +173,20 @@ WSGI_APPLICATION = "portal.wsgi.application"
 #     }
 # }
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "HOST": DATABASE_HOST,
+        "NAME": DATABASE_NAME,
+        "PASSWORD": DATABASE_PASSWORD,
+        "PORT": f"{DATABASE_PORT}",
+        "USER": DATABASE_USER,
+        "TEST": {
+            "NAME": DATABASE_NAME
+        }
+    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -285,7 +247,12 @@ STATICFILES_DIRS = [
 # Default storage settings, with the staticfiles storage updated.
 # See https://docs.djangoproject.com/en/5.1/ref/settings/#std-setting-STORAGES
 STORAGES = {
-    "default": DEFAULT_STORAGE,
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "location": ENV.lower(),
+        },
+    },
     # ManifestStaticFilesStorage is recommended in production, to prevent
     # outdated JavaScript / CSS assets being served from cache
     # (e.g. after a Wagtail upgrade).
