@@ -23,6 +23,14 @@ class EventSchedule(index.Indexed, UUIDModel, Orderable):
     created_at = models.DateTimeField(auto_now_add=True)
     sort_order = models.PositiveIntegerField(default=count)
 
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
+
     def __str__(self):
         return self.title
 

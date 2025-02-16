@@ -17,6 +17,14 @@ class FaqCategory(UUIDModel, SoftDeletableModel, Orderable):
     created_at = models.DateTimeField(auto_now_add=True)
     sort_order = models.PositiveIntegerField(default=count)
 
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
+
     def __str__(self):
         return self.name
 
@@ -50,6 +58,14 @@ class Faq(UUIDModel, SoftDeletableModel, Orderable):
     related_link = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     sort_order = models.PositiveIntegerField(default=count)
+
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
 
     def __str__(self):
         return self.question

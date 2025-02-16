@@ -81,6 +81,24 @@ env_csrf_trusted_origins = env("CSRF_TRUSTED_ORIGINS", default=None)
 CSRF_COOKIE_DOMAIN: str = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS: list = env_csrf_trusted_origins.split(",") if env_csrf_trusted_origins else []
 
+# [Google Cloud]
+## Set the default storage settings if the Google Cloud credentials are available using the GOOGLE_APPLICATION_CREDENTIALS environment variable.
+try:
+    path = "env/google_certificate.json"
+    google_certificate_path: PosixPath = Path(path)
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
+except FileNotFoundError:
+    path = "/etc/secrets/google_certificate.json"
+    google_certificate_path: PosixPath = Path(path)
+    try:
+        GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
+        GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
+    except Exception as e:
+        from logging import getLogger
+        logger = getLogger(APP_NAME)
+        logger.warning(f"Failed to load Google Firebase certificate: {e}")
+        GOOGLE_FIREBASE_CERTIFICATE = {}
+
 # ------------------------------------------------------------------------------
 
 # Application definition
@@ -92,6 +110,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_tasks",
     # wegtail
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -270,6 +289,13 @@ STATIC_URL = "static/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
+
+# Django Task settings
+TASKS = {
+    "default": {
+        "BACKEND": "django_tasks.backends.immediate.ImmediateBackend"
+    }
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

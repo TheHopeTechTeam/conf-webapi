@@ -14,7 +14,13 @@ class TicketType(index.Indexed, UUIDModel, SoftDeletableModel):
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def pk(self) -> str:
+        """
 
+        :return:
+        """
+        return str(self.id)
 
     def __str__(self):
         return self.name
@@ -34,6 +40,14 @@ class Ticket(index.Indexed, UUIDModel, SoftDeletableModel):
     conference = models.ForeignKey('conference.Conference', on_delete=models.CASCADE)
     ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
 
     def __str__(self):
         return self.title
@@ -68,6 +82,14 @@ class TicketRegisterDetail(index.Indexed, UUIDModel, SoftDeletableModel):
     identity = models.CharField(max_length=16, choices=Identity.choices, blank=True, null=True)
     registered_at = models.DateTimeField(null=True, blank=True)
     unregistered_at = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
 
     def __str__(self):
         return f"{self.account.display_name} - {self.ticket.title}"

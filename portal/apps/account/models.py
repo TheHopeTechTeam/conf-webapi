@@ -35,6 +35,14 @@ class Account(index.Indexed, UUIDModel):
     last_login = models.DateTimeField(null=True, blank=True)
     is_service = models.BooleanField(default=False, db_comment="Is service")
 
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
+
     def __str__(self):
         return self.display_name or self.phone_number
 
@@ -98,6 +106,14 @@ class AccountAuthProvider(index.Indexed, UUIDModel):
     created_at = models.DateTimeField(editable=False, db_comment="Creation timestamp", auto_now_add=True)
     extra_data = models.JSONField(blank=True, null=True)
 
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
+
     def __str__(self):
         return f"{self.provider} - {self.account.display_name or self.account.phone_number}"
 
@@ -116,6 +132,14 @@ class AccountPasswordAuth(index.Indexed, UUIDModel):
     password = models.CharField(max_length=255)
     salt = models.CharField(max_length=255)
     created_at = models.DateTimeField(editable=False, db_comment="Creation timestamp", auto_now_add=True)
+
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
 
     def __str__(self):
         return self.account.display_name or self.account.phone_number

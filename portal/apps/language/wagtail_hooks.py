@@ -17,7 +17,7 @@ class LanguageModelAdmin(ModelAdmin):
     menu_icon = "site"
     menu_order = MenuOrder.Language
     add_to_settings_menu = False
-    add_to_admin_menu = True
+    add_to_admin_menu = False
     list_display = ("name", "code", "is_active")
     search_fields = ("name", "code")
     ordering = ["name"]

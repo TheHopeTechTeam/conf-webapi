@@ -18,6 +18,14 @@ class Conference(index.Indexed, UUIDModel, SoftDeletableModel):
     created_at = models.DateTimeField(auto_now_add=True)
     instructors = models.ManyToManyField('instructor.Instructor', related_name="conference_instructors")
 
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
+
     def __str__(self):
         return self.title
 

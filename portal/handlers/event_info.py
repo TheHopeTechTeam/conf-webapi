@@ -31,7 +31,8 @@ class EventInfoHandler:
                     id=event_schedule.id,
                     title=event_schedule.title,
                     description=event_schedule.description,
-                    start_time=event_schedule.start_time
+                    start_time=event_schedule.start_time,
+                    color=event_schedule.color
                 )
             )
         return EventScheduleList(schedules=event_schedule_list)

@@ -52,9 +52,9 @@ def init_firebase():
     credential = credentials.Certificate(settings.GOOGLE_FIREBASE_CERTIFICATE)
     firebase_admin.initialize_app(
         credential=credential,
-        options={
-            "storageBucket": settings.FIREBASE_STORAGE_BUCKET
-        }
+        # options={
+        #     "storageBucket": settings.FIREBASE_STORAGE_BUCKET
+        # }
     )
 
 

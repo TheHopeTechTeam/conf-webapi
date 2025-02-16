@@ -26,6 +26,14 @@ class Location(index.Indexed, UUIDModel, SoftDeletableModel):
         related_name='+',  # Disables reverse relation to optimize database structure
     )
 
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
+
     def __str__(self):
         return self.name
 
@@ -47,5 +55,6 @@ class Location(index.Indexed, UUIDModel, SoftDeletableModel):
             self.save()
             return 1, {}
         return super().delete(using=using, *args, **kwargs)
+
 
 auditlog.register(Location)

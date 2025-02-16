@@ -13,6 +13,14 @@ class Language(UUIDModel):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
+
     def __str__(self):
         return self.name
 
@@ -31,19 +39,19 @@ class Translation(UUIDModel):
     language = models.ForeignKey(
         Language, on_delete=models.CASCADE, related_name='translations'
     )
-    content_type = models.CharField(max_length=50)  # 模型名称
-    object_id = models.UUIDField()  # 被翻译对象的 ID
-    field_name = models.CharField(max_length=50)  # 被翻译字段名
+    content_type = models.CharField(max_length=50)
+    object_id = models.UUIDField()
+    field_name = models.CharField(max_length=50)
     translated_text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    panels = [
-        FieldPanel('language'),
-        FieldPanel('content_type'),
-        FieldPanel('object_id'),
-        FieldPanel('field_name'),
-        FieldPanel('translated_text'),
-    ]
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
 
     def __str__(self):
         return f"{self.language.code} - {self.content_type} - {self.field_name}"

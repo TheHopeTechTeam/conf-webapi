@@ -18,6 +18,14 @@ class Testimony(index.Indexed, UUIDModel):
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
+
     def __str__(self):
         return self.name
 

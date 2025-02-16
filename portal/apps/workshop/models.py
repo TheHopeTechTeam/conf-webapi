@@ -18,6 +18,14 @@ class WorkshopTimeSlot(index.Indexed, UUIDModel, SoftDeletableModel):
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
 
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
+
     def __str__(self):
         start_datetime = self.start_datetime.astimezone(tz=ZoneInfo(self.time_zone))
         end_datetime = self.end_datetime.astimezone(tz=ZoneInfo(self.time_zone))
@@ -66,6 +74,14 @@ class Workshop(index.Indexed, UUIDModel, SoftDeletableModel):
         related_name='+',
     )
 
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
+
     def __str__(self):
         return self.title
 
@@ -94,6 +110,14 @@ class WorkshopRegistration(index.Indexed, UUIDModel, SoftDeletableModel):
     account = models.ForeignKey('account.Account', on_delete=models.CASCADE)
     registered_at = models.DateTimeField(auto_now_add=True)
     unregistered_at = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def pk(self) -> str:
+        """
+
+        :return:
+        """
+        return str(self.id)
 
     def __str__(self):
         return f"{self.account.display_name} - {self.workshop.title}"
