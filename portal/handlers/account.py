@@ -67,9 +67,13 @@ class AccountHandler:
         now = datetime.now(tz=pytz.UTC)
         if account_exists:
             auth_provider_obj: AccountAuthProvider = await AccountAuthProvider.objects.aget(provider_id=token_payload.user_id)
+            auth_provider_obj.extra_data = token_payload.model_dump(
+                exclude={"name", "email", "phone_number", "exp", "iat", "user_id"}
+            )
             account: Account = await Account.objects.aget(id=auth_provider_obj.account_id)
             account.verified = True
             account.last_login = now
+            await auth_provider_obj.asave()
             await account.asave()
             return LoginResponse(id=account.id, verified=True)
         try:
