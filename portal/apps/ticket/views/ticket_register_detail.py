@@ -60,6 +60,22 @@ class TicketRegisterDetailAdmin(ModelAdmin):
     search_fields = ("ticket",)
     ordering = ["ticket"]
 
+    inspect_view_fields = [
+        "ticket_number",
+        "ticket",
+        "account",
+        "belong_church",
+        "identity",
+        "registered_at",
+        "unregistered_at",
+        "order_person_name",
+        "order_person_phone_number",
+        "order_person_email",
+        "remark"
+    ]
+    inspect_view_fields_exclude = ["is_removed"]
+    inspect_view_enabled = True
+
     index_template_name = "modeladmin/ticket/ticket_register_details/index.html"
 
     permission_helper_class = TicketRegisterDetailPermission

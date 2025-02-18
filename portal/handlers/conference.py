@@ -38,6 +38,16 @@ class ConferenceHandler:
             )
         return ConferenceList(conferences=conference_list)
 
+    async def get_active_conference(self) -> ConferenceDetail:
+        """
+        Get an active conference
+        :return:
+        """
+        obj: Conference = await Conference.objects.filter(is_removed=False, active=True).afirst()  # noqa
+        active_obj = await self.get_conference_detail(conference_id=obj.id)
+        return active_obj
+
+
     async def get_conference_detail(self, conference_id: uuid.UUID) -> ConferenceDetail:
         """
         Get conference detail
@@ -47,7 +57,7 @@ class ConferenceHandler:
         obj: Conference = await Conference.objects.aget(id=conference_id)  # noqa
         location_obj: Location = await Location.objects.aget(id=obj.location_id)
         instructor_list = []
-        instructor_objs = obj.instructors.all()
+        instructor_objs = obj.instructors.order_by("sort_order").all()
         async for instructor in instructor_objs:
             instructor_list.append(
                 InstructorBase(

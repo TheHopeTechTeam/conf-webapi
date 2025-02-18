@@ -81,12 +81,16 @@ env_csrf_trusted_origins = env("CSRF_TRUSTED_ORIGINS", default=None)
 CSRF_COOKIE_DOMAIN: str = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS: list = env_csrf_trusted_origins.split(",") if env_csrf_trusted_origins else []
 
+# [Firebase]
+FIREBASE_TEST_PHONE_NUMBER: str = env("FIREBASE_TEST_PHONE_NUMBER", default="")
+
 # [Google Cloud]
 ## Set the default storage settings if the Google Cloud credentials are available using the GOOGLE_APPLICATION_CREDENTIALS environment variable.
 try:
     path = "env/google_certificate.json"
     google_certificate_path: PosixPath = Path(path)
     GS_CREDENTIALS = service_account.Credentials.from_service_account_file(path)
+    GOOGLE_FIREBASE_CERTIFICATE: dict = json.loads(google_certificate_path.read_text())
 except FileNotFoundError:
     path = "/etc/secrets/google_certificate.json"
     google_certificate_path: PosixPath = Path(path)

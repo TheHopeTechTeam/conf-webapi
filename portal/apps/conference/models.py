@@ -15,6 +15,7 @@ class Conference(index.Indexed, UUIDModel, SoftDeletableModel):
     start_date = models.DateField()
     end_date = models.DateField()
     location = models.ForeignKey('location.Location', on_delete=models.SET_NULL, null=True)
+    active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     instructors = models.ManyToManyField('instructor.Instructor', related_name="conference_instructors")
 

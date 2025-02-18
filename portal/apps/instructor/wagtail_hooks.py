@@ -6,20 +6,24 @@ from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
 from .models import Instructor
 from portal.libs.consts.enums import MenuOrder
+from portal.libs.mixins.orderable_mixin import OrderableMixin
 
 
 @modeladmin_register
-class InstructorModelAdmin(ModelAdmin):
+class InstructorModelAdmin(OrderableMixin, ModelAdmin):
+    """
+    Instructor Model Admin
+    """
     model = Instructor
     base_url_path = "instructors"
     menu_label = "Instructors"
     menu_icon = "user"
     menu_order = MenuOrder.Instructor
-    add_to_settings_menu = False
-    add_to_admin_menu = True
-    list_display = ("name", "bio")
-    search_fields = ("name", "bio")
-    ordering = ["name"]
+
+    list_display = ("name", "title", "bio")
+
+    search_fields = ("name", "title", "bio")
+    ordering = ("sort_order",)
 
     custom_panels = [
         FieldPanel("name"),

@@ -10,7 +10,7 @@ from django.db import models
 from model_utils.models import UUIDModel
 from wagtail.search import index
 
-from portal.libs.consts.enums import Provider
+from portal.libs.consts.enums import Provider, Gender
 
 
 class Account(index.Indexed, UUIDModel):
@@ -29,11 +29,13 @@ class Account(index.Indexed, UUIDModel):
         validators=[EmailValidator(message="Enter a valid email address")]
     )
     display_name = models.CharField(max_length=255, blank=True, null=True)
+    gender = models.PositiveSmallIntegerField(choices=Gender.choices, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(editable=False, db_comment="Creation timestamp", auto_now_add=True)
     last_login = models.DateTimeField(null=True, blank=True)
     is_service = models.BooleanField(default=False, db_comment="Is service")
+    remark = models.TextField(blank=True, null=True)
 
     @property
     def pk(self) -> str:
@@ -96,10 +98,9 @@ class AccountAuthProvider(index.Indexed, UUIDModel):
     """
     AccountAuthProvider model
     """
-
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     provider = models.CharField(max_length=16, choices=Provider.choices)
-    provider_id = models.CharField(max_length=255)
+    provider_id = models.CharField(unique=True, max_length=255)
     access_token = models.CharField(max_length=255, blank=True, null=True)
     refresh_token = models.CharField(max_length=255, blank=True, null=True)
     token_expires_at = models.DateTimeField(blank=True, null=True)

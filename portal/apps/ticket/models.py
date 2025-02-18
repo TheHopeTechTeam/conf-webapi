@@ -82,6 +82,10 @@ class TicketRegisterDetail(index.Indexed, UUIDModel, SoftDeletableModel):
     identity = models.CharField(max_length=16, choices=Identity.choices, blank=True, null=True)
     registered_at = models.DateTimeField(null=True, blank=True)
     unregistered_at = models.DateTimeField(null=True, blank=True)
+    order_person_name = models.CharField(max_length=255, blank=True, null=True)
+    order_person_phone_number = models.CharField(max_length=20, blank=True, null=True)
+    order_person_email = models.EmailField(max_length=255, blank=True, null=True)
+    remark = models.TextField(null=True, blank=True)
 
     @property
     def pk(self) -> str:
@@ -99,7 +103,6 @@ class TicketRegisterDetail(index.Indexed, UUIDModel, SoftDeletableModel):
         verbose_name = "Ticket Register Detail"
         verbose_name_plural = "Ticket Register Details"
         ordering = ["registered_at"]
-        unique_together = ("ticket_number", "ticket", "account")
 
 
 auditlog.register(TicketType)

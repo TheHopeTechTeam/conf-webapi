@@ -41,4 +41,23 @@ class Provider(Enum):
 
         :return:
         """
-        return [(key.value, key.name) for key in cls]
+        return [(key.value, key.name.title()) for key in cls]
+
+
+
+class Gender(IntEnum):
+    """
+    Gender
+    """
+    UNKNOWN = 0
+    MALE = 1
+    FEMALE = 2
+    OTHER = 3
+
+    @classmethod
+    def choices(cls):
+        """
+
+        :return:
+        """
+        return [(key.value, key.name.title()) for key in cls]

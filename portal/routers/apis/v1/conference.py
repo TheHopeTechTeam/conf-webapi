@@ -52,6 +52,30 @@ async def get_conferences(
 
 
 @router.get(
+    path="/active",
+    response_model=ConferenceDetail,
+    status_code=status.HTTP_200_OK,
+)
+@inject
+async def get_active_conference(
+    request: Request,
+    response: Response,
+    headers: Annotated[HeaderInfo, Header()],
+    conference_handler: ConferenceHandler = Depends(Provide[Container.conference_handler]),
+) -> ConferenceDetail:
+    """
+    Get an active conference
+    :param request:
+    :param response:
+    :param headers:
+    :param conference_handler:
+    :return:
+    """
+    conference = await conference_handler.get_active_conference()
+    return conference
+
+
+@router.get(
     path="/{conference_id}",
     response_model=ConferenceDetail,
     status_code=status.HTTP_200_OK,
