@@ -50,7 +50,14 @@ async def upload_csv(
         # logger.info("record count: %s", len(records))
         # records = records[0:3]
         # create firebase user
-        tasks = [create_or_get_firebase_user(str(int(record["參加人電話"]))) for record in records]
+        records = [record for record in records if record.get("訂單編號") and record.get("票號")]
+        tasks = []
+        for record in records:
+            if not record.get("訂單編號") and not record.get("票號"):
+                continue
+            participant_phone_number = record.get("參加人電話")
+            participant_phone_number = str(int(participant_phone_number)) if participant_phone_number else None
+            tasks.append(create_or_get_firebase_user(participant_phone_number))
         user_infos: list[UserInfo] = await concurrency_worker(tasks)
         for record, user_info in zip(records, user_infos):
             if not user_info:
@@ -73,12 +80,15 @@ async def upload_csv(
         logger.error(e)
 
 
-async def create_or_get_firebase_user(phone_number: str) -> UserInfo:
+async def create_or_get_firebase_user(phone_number: str = None) -> UserInfo:
     """
 
     :param phone_number:
     :return:
     """
+    if not phone_number:
+        user_record = auth.get_user_by_phone_number(settings.FIREBASE_TEST_PHONE_NUMBER)
+        return UserInfo(firebase_user=user_record, exist=False, wrong_phone_number=True)
     parse_phone_num = phonenumbers.parse(number=f"+{phone_number}")
     international_number = phonenumbers.format_number(parse_phone_num, phonenumbers.PhoneNumberFormat.E164)
     try:
@@ -107,11 +117,13 @@ async def create_ticket_register_detail_obj(account: Account, pre_convert_record
     utc_registered_at = registered_at.astimezone(pytz.utc)
     account_obj = await Account.objects.filter(phone_number=account.phone_number).afirst()
     remark = ""
+    participant_phone_number = record.get("參加人電話")
+    participant_phone_number = str(int(participant_phone_number)) if participant_phone_number else None
     if user_info.exist:
-        remark += f"------\n參加人: {record.get('參加人姓名')}\n參加人電話: {str(int(record.get('參加人電話')))}\n(訂購人可能買兩張以上票券)\n"
+        remark += f"------\n參加人: {record.get('參加人姓名')}\n參加人電話: {participant_phone_number}\n(訂購人可能買兩張以上票券)\n"
     if user_info.wrong_phone_number:
-        remark += f"------\n錯誤電話號碼: {str(int(record.get('參加人電話')))}"
-
+        remark += f"------\n錯誤電話號碼: {participant_phone_number}"
+    order_person_phone_number = record.get("訂購人電話")
     return TicketRegisterDetail(
         ticket_number=record.get("票號"),
         ticket=ticket,
@@ -120,7 +132,7 @@ async def create_ticket_register_detail_obj(account: Account, pre_convert_record
         identity=record.get("所屬教會身份"),
         registered_at=utc_registered_at,
         order_person_name=record.get("訂購人姓名"),
-        order_person_phone_number=str(int(record.get("訂購人電話"))),
+        order_person_phone_number=str(int(order_person_phone_number)) if order_person_phone_number else None,
         order_person_email=record.get("訂購人Email"),
         remark=remark
     )
