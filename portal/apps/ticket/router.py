@@ -21,6 +21,16 @@ from portal.libs.utils.async_worker import concurrency_worker
 router = APIRouter()
 
 
+IDENTITY_MAPPING = {
+    "主任牧師": "senior_pastor",
+    "牧師": "pastor",
+    "傳道": "evangelist",
+    "神學生": "theology_student",
+    "事工負責人": "ministry_leader",
+    "會眾": "congregant"
+}
+
+
 class UserInfo(BaseModel):
     model_config = {
         "arbitrary_types_allowed": True
@@ -132,7 +142,7 @@ async def create_ticket_register_detail_obj(account: Account, pre_convert_record
             ticket=ticket,
             account=account_obj,
             belong_church=record.get("所屬教會"),
-            identity=record.get("所屬教會身份"),
+            identity=IDENTITY_MAPPING.get(record.get("身份")),
             registered_at=utc_registered_at,
             order_person_name=record.get("訂購人姓名"),
             order_person_phone_number=str(int(order_person_phone_number)) if order_person_phone_number else None,

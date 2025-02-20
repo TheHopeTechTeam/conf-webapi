@@ -2,6 +2,7 @@
 Ticket Register Detail Model Admin
 """
 from django.contrib import admin
+from wagtail.admin.panels import ObjectList, FieldPanel
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin
 
@@ -15,15 +16,6 @@ class TicketRegisterDetailPermission(PermissionHelper):
         """
 
         :param user:
-        :return:
-        """
-        return False
-
-    def user_can_edit_obj(self, user, obj):
-        """
-
-        :param user:
-        :param obj:
         :return:
         """
         return False
@@ -81,6 +73,21 @@ class TicketRegisterDetailAdmin(ModelAdmin):
     permission_helper_class = TicketRegisterDetailPermission
 
     base_url_path = "ticket_register_details"
+
+    custom_panels = [
+        FieldPanel(field_name="ticket_number", read_only=True),
+        FieldPanel(field_name="ticket", read_only=True),
+        FieldPanel(field_name="account"),
+        FieldPanel(field_name="belong_church"),
+        FieldPanel(field_name="identity"),
+        FieldPanel(field_name="registered_at", read_only=True),
+        FieldPanel(field_name="order_person_name", read_only=True),
+        FieldPanel(field_name="order_person_phone_number", read_only=True),
+        FieldPanel(field_name="order_person_email", read_only=True),
+        FieldPanel(field_name="remark")
+    ]
+
+    edit_handler = ObjectList(custom_panels)
 
     def get_queryset(self, request):
         """
