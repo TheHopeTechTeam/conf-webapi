@@ -10,13 +10,14 @@ from fastapi.security.utils import get_authorization_scheme_param
 from starlette import status
 
 from portal.apps.account.models import Account, AccountAuthProvider
+from portal.apps.ticket.models import TicketRegisterDetail, Ticket, TicketType
 from portal.exceptions.api_base import APIException
 from portal.handlers import AuthHandler
 from portal.libs.consts.enums import Provider, LoginMethod
 from portal.libs.contexts.api_context import get_api_context, APIContext
 from portal.libs.logger import logger
 from portal.schemas.auth import FirebaseTokenPayload
-from portal.serializers.v1.account import AccountLogin, AccountUpdate, LoginResponse
+from portal.serializers.v1.account import AccountLogin, AccountUpdate, LoginResponse, AccountDetail
 
 
 class AccountHandler:
@@ -118,6 +119,37 @@ class AccountHandler:
         """
         # account = await self.get_account(uid=uid)
         # return user.metadata.creation_timestamp == user.metadata.last_sign_in_timestamp
+
+    async def get_account(self, account_id: uuid.UUID) -> AccountDetail:
+        """
+        Get account
+        :param account_id:
+        :return:
+        """
+        if account_id != self._api_context.account.id:
+            raise APIException(status_code=status.HTTP_403_FORBIDDEN, message="Forbidden")
+        account_obj = await Account.objects.aget(id=account_id)
+        ticket_register_detail_obj = await TicketRegisterDetail.objects.filter(account=account_obj).afirst()
+        if not ticket_register_detail_obj:
+            return AccountDetail(
+                id=account_obj.id,
+                email=account_obj.email,
+                phone_number=account_obj.phone_number,
+                display_name=account_obj.display_name
+            )
+        ticket_obj = await Ticket.objects.filter(id=ticket_register_detail_obj.ticket_id).afirst()
+        ticket_type_obj = await TicketType.objects.filter(id=ticket_obj.ticket_type_id).afirst()
+        account = AccountDetail(
+            id=account_obj.id,
+            email=account_obj.email,
+            phone_number=account_obj.phone_number,
+            display_name=account_obj.display_name,
+            ticket_number=ticket_register_detail_obj.ticket_number,
+            ticket_type=ticket_type_obj.name,
+            belong_church=ticket_register_detail_obj.belong_church,
+            identity=ticket_register_detail_obj.identity
+        )
+        return account
 
     async def update_account(self, account_id: uuid.UUID, model: AccountUpdate):
         """

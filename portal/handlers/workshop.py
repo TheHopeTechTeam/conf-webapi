@@ -67,7 +67,8 @@ class WorkshopHandler:
                             address=location.address,
                             floor=location.floor,
                             room_number=location.room_number
-                        )
+                        ),
+                        slido_url=workshop.slido_url
                     )
                 )
             workshop_schedules.append(

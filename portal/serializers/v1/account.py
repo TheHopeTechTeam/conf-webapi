@@ -1,6 +1,8 @@
 """
 Account serializers
 """
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 from portal.libs.consts.enums import LoginMethod
@@ -43,20 +45,20 @@ class AccountBase(UUIDBaseModel):
     """
     Account
     """
-    google_uid: str = Field(..., serialization_alias="googleUid", description="Google UID")
+    # google_uid: str = Field(..., serialization_alias="googleUid", description="Google UID")
     phone_number: str = Field(..., serialization_alias="phoneNumber", description="Phone Number")
-    email: str = Field(..., description="Email")
-    display_name: str = Field(..., serialization_alias="displayName", description="Display Name")
+    email: Optional[str] = Field(default=None, description="Email")
+    display_name: Optional[str] = Field(default=None, serialization_alias="displayName", description="Display Name")
 
 
 class AccountDetail(AccountBase):
     """
     Account detail
     """
-    ticket_number: str = Field(..., serialization_alias="ticketNumber", description="Ticket Number")
-    ticket_type: str = Field(..., serialization_alias="ticketType", description="Ticket Type")
-    belong_church: str = Field(..., serialization_alias="belongChurch", description="Belong Church")
-    identity: str = Field(..., description="Identity")
+    ticket_number: Optional[str] = Field(default=None, serialization_alias="ticketNumber", description="Ticket Number")
+    ticket_type: Optional[str] = Field(default=None, serialization_alias="ticketType", description="Ticket Type")
+    belong_church: Optional[str] = Field(default=None, serialization_alias="belongChurch", description="Belong Church")
+    identity: Optional[str] = Field(default=None, description="Identity")
 
 
 class AccountUpdate(BaseModel):

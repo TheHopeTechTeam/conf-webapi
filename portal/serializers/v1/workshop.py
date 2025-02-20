@@ -19,6 +19,7 @@ class WorkshopBase(BaseModel):
     title: str = Field(..., description="Title")
     description: str = Field(..., description="Description")
     location: LocationBase = Field(..., description="Location")
+    slido_url: Optional[str] = Field(default=None, serialization_alias="slidoUrl", description="Slido URL")
 
 
 class WorkshopDetail(WorkshopBase):
@@ -32,7 +33,6 @@ class WorkshopDetail(WorkshopBase):
     participants_limit: int = Field(..., serialization_alias="participantsLimit", description="Participants Limit")
     is_full: bool = Field(..., serialization_alias="isFull", description="The number of participants has reached the upper limit")
     image_url: Optional[str] = Field(default=None, serialization_alias="imageUrl", description="Image URL")
-    slido_url: Optional[str] = Field(default=None, serialization_alias="slidoUrl", description="Slido URL")
 
 
 class WorkshopRegistered(WorkshopBase):

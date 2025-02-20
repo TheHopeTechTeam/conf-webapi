@@ -6,7 +6,7 @@ from typing import Optional
 from fastapi import Request
 from fastapi.security.http import HTTPAuthorizationCredentials, HTTPBearer
 
-from portal.apps.account.models import Account
+from portal.apps.account.models import Account, AccountAuthProvider
 from portal.exceptions.auth import UnauthorizedException
 from portal.handlers import AuthHandler
 from portal.libs.contexts.api_context import APIContext, set_api_context
@@ -40,7 +40,8 @@ class AccessTokenAuth(HTTPBearer):
         auth_handler = AuthHandler()
         payload: FirebaseTokenPayload = await auth_handler.verify_firebase_token(token=token)
         try:
-            account = await Account.objects.aget(google_uid=payload.user_id)
+            account_auth_provider = await AccountAuthProvider.objects.aget(provider_id=payload.user_id)
+            account = await Account.objects.aget(id=account_auth_provider.account_id)
         except Account.DoesNotExist:
             account = None
         return APIContext(

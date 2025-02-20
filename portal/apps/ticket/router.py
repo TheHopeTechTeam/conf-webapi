@@ -64,7 +64,9 @@ async def upload_csv(
                 continue
             record.setdefault("user_info", user_info)
 
-        pre_convert_records = {row["user_info"].firebase_user.phone_number: {**row} for _, row in pd.DataFrame(records).iterrows()}
+        record_df = pd.DataFrame(records)
+        record_df = record_df.replace({np.nan: None})
+        pre_convert_records = {row["user_info"].firebase_user.phone_number: {**row} for _, row in record_df.iterrows()}
         # bulk create account
         account_results = await bulk_create_account_objs(records)
         # bulk create account auth
@@ -111,31 +113,35 @@ async def create_ticket_register_detail_obj(account: Account, pre_convert_record
     """
     record = pre_convert_records.get(account.phone_number)
     user_info: UserInfo = record["user_info"]
-    ticket = await Ticket.objects.filter(title__contains=record["票券名稱"]).afirst()
-    utc8_registered_at = parser.parse(record["報名時間(GTM+8)"])
-    registered_at = pytz.timezone("Asia/Taipei").localize(utc8_registered_at)
-    utc_registered_at = registered_at.astimezone(pytz.utc)
-    account_obj = await Account.objects.filter(phone_number=account.phone_number).afirst()
-    remark = ""
-    participant_phone_number = record.get("參加人電話")
-    participant_phone_number = str(int(participant_phone_number)) if participant_phone_number else None
-    if user_info.exist:
-        remark += f"------\n參加人: {record.get('參加人姓名')}\n參加人電話: {participant_phone_number}\n(訂購人可能買兩張以上票券)\n"
-    if user_info.wrong_phone_number:
-        remark += f"------\n錯誤電話號碼: {participant_phone_number}"
-    order_person_phone_number = record.get("訂購人電話")
-    return TicketRegisterDetail(
-        ticket_number=record.get("票號"),
-        ticket=ticket,
-        account=account_obj,
-        belong_church=record.get("所屬教會"),
-        identity=record.get("所屬教會身份"),
-        registered_at=utc_registered_at,
-        order_person_name=record.get("訂購人姓名"),
-        order_person_phone_number=str(int(order_person_phone_number)) if order_person_phone_number else None,
-        order_person_email=record.get("訂購人Email"),
-        remark=remark
-    )
+    try:
+        ticket = await Ticket.objects.filter(title__contains=record["票券名稱"]).afirst()
+        utc8_registered_at = parser.parse(record["報名時間(GTM+8)"])
+        registered_at = pytz.timezone("Asia/Taipei").localize(utc8_registered_at)
+        utc_registered_at = registered_at.astimezone(pytz.utc)
+        account_obj = await Account.objects.filter(phone_number=account.phone_number).afirst()
+        remark = ""
+        participant_phone_number = record.get("參加人電話")
+        participant_phone_number = str(int(participant_phone_number)) if participant_phone_number else None
+        if user_info.exist:
+            remark += f"------\n參加人: {record.get('參加人姓名')}\n參加人電話: {participant_phone_number}\n(訂購人可能買兩張以上票券)\n"
+        if user_info.wrong_phone_number:
+            remark += f"------\n錯誤電話號碼: {participant_phone_number}"
+        order_person_phone_number = record.get("訂購人電話")
+        return TicketRegisterDetail(
+            ticket_number=record.get("票號"),
+            ticket=ticket,
+            account=account_obj,
+            belong_church=record.get("所屬教會"),
+            identity=record.get("所屬教會身份"),
+            registered_at=utc_registered_at,
+            order_person_name=record.get("訂購人姓名"),
+            order_person_phone_number=str(int(order_person_phone_number)) if order_person_phone_number else None,
+            order_person_email=record.get("訂購人Email"),
+            remark=remark
+        )
+    except Exception as e:
+        logger.error(e)
+        logger.info(f"record: {record}")
 
 
 async def bulk_create_account_objs(records: list[dict]) -> list[Account]:
@@ -154,11 +160,14 @@ async def bulk_create_account_objs(records: list[dict]) -> list[Account]:
             gender = Gender.FEMALE
         else:
             gender = Gender.UNKNOWN
-        account_obj = Account(
-            phone_number=firebase_user.phone_number,
-            display_name=record.get("參加人姓名"),
-            gender=gender.value
-        )
+        if firebase_user.phone_number == settings.FIREBASE_TEST_PHONE_NUMBER:
+            account_obj = Account(phone_number=firebase_user.phone_number)
+        else:
+            account_obj = Account(
+                phone_number=firebase_user.phone_number,
+                display_name=record.get("參加人姓名"),
+                gender=gender.value
+            )
         account_objs.append(account_obj)
     account_results = await Account.objects.abulk_create(objs=account_objs, ignore_conflicts=True)
     return account_results

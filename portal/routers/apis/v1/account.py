@@ -53,24 +53,12 @@ async def get_account(
     request: Request,
     response: Response,
     account_id: uuid.UUID,
+    account_handler: AccountHandler = Depends(Provide[Container.account_handler]),
 ) -> AccountDetail:
     """
     Get an account
-    # TODO: Implement the actual logic
     """
-    ticket_numbers = [str(f"TH{random.randint(100000, 999999)}") for _ in range(3)]
-    ticket_types = ["REGULAR", "CREATIVE", "ALL ACCESS", "LEADERSHIP"]
-    return AccountDetail(
-        id=account_id,
-        google_uid="google_uid",
-        phone_number="phone_number",
-        email="email",
-        display_name="Dummy",
-        ticket_number=random.choice(ticket_numbers),
-        ticket_type=random.choice(ticket_types),
-        belong_church="The Hope",
-        identity="會眾",
-    )
+    return await account_handler.get_account(account_id=account_id)
 
 
 @router.put(
