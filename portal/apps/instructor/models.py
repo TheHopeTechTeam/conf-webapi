@@ -47,18 +47,5 @@ class Instructor(UUIDModel, SoftDeletableModel, Orderable):
         verbose_name_plural = "Instructors"
         ordering = ["sort_order"]
 
-    def delete(
-        self,
-        using: Any = None,
-        *args: Any,
-        soft: bool = True,
-        **kwargs: Any
-    ) -> tuple[int, dict[str, int]] | None:
-        if soft:
-            self.is_removed = True
-            self.save()
-            return 1, {}
-        return super().delete(using=using, *args, **kwargs)
-
 
 auditlog.register(Instructor)

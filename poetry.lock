@@ -166,19 +166,20 @@ test = ["distro (>=1.9.0,<1.10.0)", "flake8 (>=6.1,<7.0)", "flake8-pyi (>=24.1.0
 
 [[package]]
 name = "beautifulsoup4"
-version = "4.12.3"
+version = "4.13.3"
 description = "Screen-scraping library"
 optional = false
-python-versions = ">=3.6.0"
+python-versions = ">=3.7.0"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "beautifulsoup4-4.12.3-py3-none-any.whl", hash = "sha256:b80878c9f40111313e55da8ba20bdba06d8fa3969fc68304167741bbf9e082ed"},
-    {file = "beautifulsoup4-4.12.3.tar.gz", hash = "sha256:74e3d1928edc070d21748185c46e3fb33490f22f52a3addee9aee0f4f7781051"},
+    {file = "beautifulsoup4-4.13.3-py3-none-any.whl", hash = "sha256:99045d7d3f08f91f0d656bc9b7efbae189426cd913d830294a15eefa0ea4df16"},
+    {file = "beautifulsoup4-4.13.3.tar.gz", hash = "sha256:1bd32405dacc920b42b83ba01644747ed77456a65760e285fbc47633ceddaf8b"},
 ]
 
 [package.dependencies]
 soupsieve = ">1.2"
+typing-extensions = ">=4.0.0"
 
 [package.extras]
 cchardet = ["cchardet"]
@@ -189,19 +190,19 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.36.24"
+version = "1.36.25"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "boto3-1.36.24-py3-none-any.whl", hash = "sha256:c9055fe6a33f79c43053c06db432092cfcf88f4b4181950f5ca8f2f0cb6abb87"},
-    {file = "boto3-1.36.24.tar.gz", hash = "sha256:777ec08a6fe0ad77fa0607b431542c51d2d2e4145fecd512bee9f383ee4184f2"},
+    {file = "boto3-1.36.25-py3-none-any.whl", hash = "sha256:41fb90a516995946563ec91b9d891e2516c58617e9556d5e86dfa62da3fdebe6"},
+    {file = "boto3-1.36.25.tar.gz", hash = "sha256:a057c19adffb48737c192bdb10f9d85e0d9dcecd21327f51520c15db9022a835"},
 ]
 
 [package.dependencies]
-botocore = ">=1.36.24,<1.37.0"
+botocore = ">=1.36.25,<1.37.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.11.0,<0.12.0"
 
@@ -210,15 +211,15 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.36.24"
+version = "1.36.25"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "botocore-1.36.24-py3-none-any.whl", hash = "sha256:b8b2ad60e6545aaef3a40163793c39555fcfd67fb081a38695018026c4f4db25"},
-    {file = "botocore-1.36.24.tar.gz", hash = "sha256:7d35ba92ccbed7aa7e1563b12bb339bde612d5f845c89bfdd79a6db8c26b9f2e"},
+    {file = "botocore-1.36.25-py3-none-any.whl", hash = "sha256:04c8ff03531e8d92baa8c98d1850bdf01668a805467f4222b65e5325f94aa8af"},
+    {file = "botocore-1.36.25.tar.gz", hash = "sha256:3b0a857d2621c336fb82a36cb6da4b6e062d346451ac46d110b074e5e5fd7cfc"},
 ]
 
 [package.dependencies]
@@ -347,15 +348,15 @@ redis = ["redis (>=2.10.5)"]
 
 [[package]]
 name = "cachetools"
-version = "5.5.1"
+version = "5.5.2"
 description = "Extensible memoizing collections and decorators"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "cachetools-5.5.1-py3-none-any.whl", hash = "sha256:b76651fdc3b24ead3c648bbdeeb940c1b04d365b38b4af66788f9ec4a81d42bb"},
-    {file = "cachetools-5.5.1.tar.gz", hash = "sha256:70f238fbba50383ef62e55c6aff6d9673175fe59f7c6782c7a0b9e38f4a9df95"},
+    {file = "cachetools-5.5.2-py3-none-any.whl", hash = "sha256:d26a22bcc62eb95c3beabd9f1ee5e820d3d2704fe2967cbe350e20c8ffcd3f0a"},
+    {file = "cachetools-5.5.2.tar.gz", hash = "sha256:1a661caa9175d26759571b2e19580f9d6393969e5dfca11fdb1f947a23e640d4"},
 ]
 
 [[package]]
@@ -811,15 +812,15 @@ testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)", "setuptools (>=71.0.
 
 [[package]]
 name = "django-filter"
-version = "24.3"
+version = "25.1"
 description = "Django-filter is a reusable Django application for allowing users to filter querysets dynamically."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "django_filter-24.3-py3-none-any.whl", hash = "sha256:c4852822928ce17fb699bcfccd644b3574f1a2d80aeb2b4ff4f16b02dd49dc64"},
-    {file = "django_filter-24.3.tar.gz", hash = "sha256:d8ccaf6732afd21ca0542f6733b11591030fa98669f8d15599b358e24a2cd9c3"},
+    {file = "django_filter-25.1-py3-none-any.whl", hash = "sha256:4fa48677cf5857b9b1347fed23e355ea792464e0fe07244d1fdfb8a806215b80"},
+    {file = "django_filter-25.1.tar.gz", hash = "sha256:1ec9eef48fa8da1c0ac9b411744b16c3f4c31176c867886e4c48da369c407153"},
 ]
 
 [package.dependencies]
@@ -1015,20 +1016,20 @@ django = ">=4.2"
 
 [[package]]
 name = "draftjs-exporter"
-version = "5.0.0"
+version = "5.1.0"
 description = "Library to convert rich text from Draft.js raw ContentState to HTML"
 optional = false
 python-versions = "*"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "draftjs_exporter-5.0.0-py3-none-any.whl", hash = "sha256:8cb9d2d51284233decfe274802f1c53e257158c62b9f53ed2399de3fa80ac561"},
-    {file = "draftjs_exporter-5.0.0.tar.gz", hash = "sha256:2efee45d4bb4c0aaacc3e5ea2983a29a29381e02037f3f92a6b12706d7b87e1e"},
+    {file = "draftjs_exporter-5.1.0-py3-none-any.whl", hash = "sha256:c32932b7933b994fd5ea74c1decf47b5c41e13ba06363f5b69b76ef10137d4e9"},
+    {file = "draftjs_exporter-5.1.0.tar.gz", hash = "sha256:9f44b8dcecb702540e3aab24af2fad8683aec910fe0034c12cfab5d716ac5f84"},
 ]
 
 [package.extras]
 html5lib = ["beautifulsoup4 (>=4.4.1,<5)", "html5lib (>=0.999,<2)"]
-lxml = ["lxml (>=4.2.0,<5)"]
+lxml = ["lxml (>=4.2.0,<6)"]
 
 [[package]]
 name = "et-xmlfile"
@@ -1212,15 +1213,15 @@ httplib2 = ">=0.19.0"
 
 [[package]]
 name = "google-cloud-core"
-version = "2.4.1"
+version = "2.4.2"
 description = "Google Cloud API client core library"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "google-cloud-core-2.4.1.tar.gz", hash = "sha256:9b7749272a812bde58fff28868d0c5e2f585b82f37e09a1f6ed2d4d10f134073"},
-    {file = "google_cloud_core-2.4.1-py2.py3-none-any.whl", hash = "sha256:a9e6a4422b9ac5c29f79a0ede9485473338e2ce78d91f2370c01e730eab22e61"},
+    {file = "google_cloud_core-2.4.2-py2.py3-none-any.whl", hash = "sha256:7459c3e83de7cb8b9ecfec9babc910efb4314030c56dd798eaad12c426f7d180"},
+    {file = "google_cloud_core-2.4.2.tar.gz", hash = "sha256:a4fcb0e2fcfd4bfe963837fad6d10943754fd79c1a50097d68540b6eb3d67f35"},
 ]
 
 [package.dependencies]
@@ -1338,15 +1339,15 @@ requests = ["requests (>=2.18.0,<3.0.0dev)"]
 
 [[package]]
 name = "googleapis-common-protos"
-version = "1.67.0"
+version = "1.68.0"
 description = "Common protobufs used in Google APIs"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "googleapis_common_protos-1.67.0-py2.py3-none-any.whl", hash = "sha256:579de760800d13616f51cf8be00c876f00a9f146d3e6510e19d1f4111758b741"},
-    {file = "googleapis_common_protos-1.67.0.tar.gz", hash = "sha256:21398025365f138be356d5923e9168737d94d46a72aefee4a6110a1f23463c86"},
+    {file = "googleapis_common_protos-1.68.0-py2.py3-none-any.whl", hash = "sha256:aaf179b2f81df26dfadac95def3b16a95064c76a5f45f07e4c68a21bb371c4ac"},
+    {file = "googleapis_common_protos-1.68.0.tar.gz", hash = "sha256:95d38161f4f9af0d9423eed8fb7b64ffd2568c3464eb542ff02c5bfa1953ab3c"},
 ]
 
 [package.dependencies]
@@ -2528,15 +2529,15 @@ typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
 name = "pydantic-settings"
-version = "2.7.1"
+version = "2.8.0"
 description = "Settings management using Pydantic"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "pydantic_settings-2.7.1-py3-none-any.whl", hash = "sha256:590be9e6e24d06db33a4262829edef682500ef008565a969c73d39d5f8bfb3fd"},
-    {file = "pydantic_settings-2.7.1.tar.gz", hash = "sha256:10c9caad35e64bfb3c2fbf70a078c0e25cc92499782e5200747f942a065dec93"},
+    {file = "pydantic_settings-2.8.0-py3-none-any.whl", hash = "sha256:c782c7dc3fb40e97b238e713c25d26f64314aece2e91abcff592fcac15f71820"},
+    {file = "pydantic_settings-2.8.0.tar.gz", hash = "sha256:88e2ca28f6e68ea102c99c3c401d6c9078e68a5df600e97b43891c34e089500a"},
 ]
 
 [package.dependencies]
@@ -3121,25 +3122,25 @@ standard = ["colorama (>=0.4)", "httptools (>=0.6.3)", "python-dotenv (>=0.13)",
 
 [[package]]
 name = "wagtail"
-version = "6.4"
+version = "6.4.1"
 description = "A Django content management system."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 markers = "python_version == \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "wagtail-6.4-py3-none-any.whl", hash = "sha256:3d89b93079711fd1703be057a06cf5d34303a20ee31b2f51384954e21fff38ce"},
-    {file = "wagtail-6.4.tar.gz", hash = "sha256:3e311f367867741a2a025ae1c6d498c177ae1936a4b92444177804fa713edff0"},
+    {file = "wagtail-6.4.1-py3-none-any.whl", hash = "sha256:85206f86b04876d5596190e042d30de0430fdb5cdd71b6005748c8a0d45066ec"},
+    {file = "wagtail-6.4.1.tar.gz", hash = "sha256:cec3e6d4920a6d178fa1eb6f4af80b370fdd5570ed924b979104e157f10ca097"},
 ]
 
 [package.dependencies]
 anyascii = ">=0.1.5"
-beautifulsoup4 = ">=4.8,<4.13"
+beautifulsoup4 = ">=4.8,<5"
 Django = ">=4.2,<6.0"
-django-filter = ">=23.3,<25"
+django-filter = ">=23.3"
 django-modelcluster = ">=6.2.1,<7.0"
 django-permissionedforms = ">=0.1,<1.0"
-django-taggit = ">=5.0,<6.2"
+django-taggit = ">=5.0,<7"
 django-tasks = ">=0.6.1,<0.7"
 django-treebeard = ">=4.5.1,<5.0"
 djangorestframework = ">=3.15.1,<4.0"
@@ -3152,7 +3153,7 @@ telepath = ">=0.3.1,<1"
 Willow = {version = ">=1.8.0,<2", extras = ["heif"]}
 
 [package.extras]
-docs = ["Sphinx (>=7.3)", "myst-parser (==2.0.0)", "pyenchant (>=3.1.1,<4)", "sphinx-autobuild (>=0.6.0)", "sphinx-wagtail-theme (==6.4.0)", "sphinxcontrib-spelling (>=7,<8)"]
+docs = ["Sphinx (>=7.3)", "myst-parser (==2.0.0)", "pyenchant (>=3.1.1,<4)", "sphinx-autobuild (>=0.6.0)", "sphinx-wagtail-theme (==6.5.0)", "sphinxcontrib-spelling (>=7,<8)"]
 testing = ["Jinja2 (>=3.0,<3.2)", "azure-mgmt-cdn (>=12.0,<13.0)", "azure-mgmt-frontdoor (>=1.0,<1.1)", "boto3 (>=1.28,<2)", "coverage (>=3.7.0)", "curlylint (==0.13.1)", "django-pattern-library (>=0.7)", "djhtml (==3.0.6)", "doc8 (==0.8.1)", "factory-boy (>=3.2)", "freezegun (>=0.3.8)", "polib (>=1.1,<2.0)", "python-dateutil (>=2.7)", "ruff (==0.1.5)", "semgrep (==1.40.0)", "tblib (>=2.0,<3.0)"]
 
 [[package]]

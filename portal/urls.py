@@ -26,7 +26,7 @@ from portal.apps.search import views as search_views
 
 urlpatterns = [
     path("", RedirectView.as_view(url="/cms/")),
-    path('admin/', admin.site.urls),
+    path('django_admin/', admin.site.urls),
     path('cms/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),

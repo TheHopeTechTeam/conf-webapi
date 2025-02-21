@@ -34,19 +34,6 @@ class FaqCategory(UUIDModel, SoftDeletableModel, Orderable):
         verbose_name_plural = "FAQ Categories"
         ordering = ["sort_order"]
 
-    def delete(
-        self,
-        using=None,
-        *args,
-        soft=True,
-        **kwargs
-    ) -> tuple[int, dict[str, int]] | None:
-        if soft:
-            self.is_removed = True
-            self.save()
-            return 1, {}
-        return super().delete(using=using, *args, **kwargs)
-
 
 class Faq(UUIDModel, SoftDeletableModel, Orderable):
     def count():  # noqa
@@ -75,19 +62,6 @@ class Faq(UUIDModel, SoftDeletableModel, Orderable):
         verbose_name = "FAQ"
         verbose_name_plural = "FAQs"
         ordering = ["sort_order"]
-
-    def delete(
-        self,
-        using=None,
-        *args,
-        soft=True,
-        **kwargs
-    ) -> tuple[int, dict[str, int]] | None:
-        if soft:
-            self.is_removed = True
-            self.save()
-            return 1, {}
-        return super().delete(using=using, *args, **kwargs)
 
 
 auditlog.register(FaqCategory)

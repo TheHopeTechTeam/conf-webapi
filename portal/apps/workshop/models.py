@@ -37,19 +37,6 @@ class WorkshopTimeSlot(index.Indexed, UUIDModel, SoftDeletableModel):
         verbose_name_plural = "Workshop Time Slots"
         ordering = ["start_datetime"]
 
-    def delete(
-        self,
-        using: Any = None,
-        *args: Any,
-        soft: bool = True,
-        **kwargs: Any
-    ) -> tuple[int, dict[str, int]] | None:
-        if soft:
-            self.is_removed = True
-            self.save()
-            return 1, {}
-        return super().delete(using=using, *args, **kwargs)
-
 
 class Workshop(index.Indexed, UUIDModel, SoftDeletableModel):
     """
@@ -60,11 +47,11 @@ class Workshop(index.Indexed, UUIDModel, SoftDeletableModel):
     title = models.CharField(max_length=255)
     description = models.TextField()
     conference = models.ForeignKey('conference.Conference', on_delete=models.CASCADE)
-    location = models.ForeignKey('location.Location', on_delete=models.SET_NULL, null=True)
-    instructor = models.ForeignKey('instructor.Instructor', on_delete=models.SET_NULL, null=True)
+    location = models.ForeignKey('location.Location', on_delete=models.PROTECT, null=True)
+    instructor = models.ForeignKey('instructor.Instructor', on_delete=models.PROTECT, null=True)
     participants_limit = models.PositiveBigIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    time_slot = models.ForeignKey(WorkshopTimeSlot, on_delete=models.SET_NULL, null=True)
+    time_slot = models.ForeignKey(WorkshopTimeSlot, on_delete=models.PROTECT, null=True)
     slido_url = models.URLField(null=True, blank=True)
     image = models.ForeignKey(
         Image,
@@ -91,19 +78,6 @@ class Workshop(index.Indexed, UUIDModel, SoftDeletableModel):
         verbose_name_plural = "Workshops"
         ordering = ["title"]
 
-    def delete(
-        self,
-        using: Any = None,
-        *args: Any,
-        soft: bool = True,
-        **kwargs: Any
-    ) -> tuple[int, dict[str, int]] | None:
-        if soft:
-            self.is_removed = True
-            self.save()
-            return 1, {}
-        return super().delete(using=using, *args, **kwargs)
-
 
 class WorkshopRegistration(index.Indexed, UUIDModel, SoftDeletableModel):
     workshop = models.ForeignKey(Workshop, null=True, on_delete=models.CASCADE)
@@ -128,19 +102,6 @@ class WorkshopRegistration(index.Indexed, UUIDModel, SoftDeletableModel):
         verbose_name_plural = "Workshop Registrations"
         ordering = ["registered_at"]
         unique_together = ('account', 'workshop')
-
-    def delete(
-        self,
-        using: Any = None,
-        *args: Any,
-        soft: bool = True,
-        **kwargs: Any
-    ) -> tuple[int, dict[str, int]] | None:
-        if soft:
-            self.is_removed = True
-            self.save()
-            return 1, {}
-        return super().delete(using=using, *args, **kwargs)
 
 
 auditlog.register(Workshop)

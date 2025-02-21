@@ -43,18 +43,5 @@ class Location(index.Indexed, UUIDModel, SoftDeletableModel):
         verbose_name_plural = "Locations"
         ordering = ["name"]
 
-    def delete(
-        self,
-        using: Any = None,
-        *args: Any,
-        soft: bool = True,
-        **kwargs: Any
-    ) -> tuple[int, dict[str, int]] | None:
-        if soft:
-            self.is_removed = True
-            self.save()
-            return 1, {}
-        return super().delete(using=using, *args, **kwargs)
-
 
 auditlog.register(Location)
