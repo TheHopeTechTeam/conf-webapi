@@ -7,7 +7,7 @@ from fastapi import Request
 from fastapi.security.http import HTTPAuthorizationCredentials, HTTPBearer
 
 from portal.apps.account.models import Account, AccountAuthProvider
-from portal.exceptions.auth import UnauthorizedException
+from portal.exceptions.auth import UnauthorizedException, InvalidTokenException
 from portal.handlers import AuthHandler
 from portal.libs.contexts.api_context import APIContext, set_api_context
 from portal.schemas.auth import FirebaseTokenPayload
@@ -38,7 +38,10 @@ class AccessTokenAuth(HTTPBearer):
         :return:
         """
         auth_handler = AuthHandler()
-        payload: FirebaseTokenPayload = await auth_handler.verify_firebase_token(token=token)
+        try:
+            payload: FirebaseTokenPayload = await auth_handler.verify_firebase_token(token=token)
+        except Exception:
+            raise InvalidTokenException()
         try:
             account_auth_provider = await AccountAuthProvider.objects.aget(provider_id=payload.user_id)
             account = await Account.objects.aget(id=account_auth_provider.account_id)
