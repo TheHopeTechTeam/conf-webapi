@@ -19,7 +19,7 @@ class Instructor(UUIDModel, SoftDeletableModel, Orderable):
 
     name = models.CharField(max_length=255)
     title = models.CharField(null=True, blank=True, max_length=255)
-    bio = models.TextField()
+    bio = models.TextField(null=True, blank=True)
     image = models.ForeignKey(
         Image,
         null=True,

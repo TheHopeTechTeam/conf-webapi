@@ -46,7 +46,7 @@ class Account(index.Indexed, UUIDModel):
         return str(self.id)
 
     def __str__(self):
-        return self.display_name or self.phone_number
+        return f"{self.display_name} ({self.phone_number})"
 
     def delete(
         self,

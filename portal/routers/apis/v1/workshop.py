@@ -55,29 +55,27 @@ async def get_workshop_schedule_list(
 
 
 @router.get(
-    path="/{workshop_id}",
-    response_model=WorkshopDetail,
-    status_code=status.HTTP_200_OK
+    path="/my_workshops",
+    status_code=status.HTTP_200_OK,
+    response_model=WorkshopRegisteredList,
+    dependencies=[check_access_token],
 )
 @inject
-async def get_workshop_detail(
+async def get_my_workshops(
     request: Request,
     response: Response,
     headers: Annotated[HeaderInfo, Header()],
-    workshop_id: uuid.UUID,
     workshop_handler: WorkshopHandler = Depends(Provide[Container.workshop_handler]),
-) -> WorkshopDetail:
+) -> WorkshopRegisteredList:
     """
 
     :param request:
     :param response:
     :param headers:
-    :param workshop_id:
     :param workshop_handler:
     :return:
     """
-    response.headers["Content-Language"] = headers.accept_language
-    return await workshop_handler.get_workshop_detail(workshop_id=workshop_id)
+    return await workshop_handler.get_my_workshops()
 
 
 @router.get(
@@ -116,6 +114,32 @@ async def get_registered_workshops(
     :return:
     """
     return await workshop_handler.get_registered_workshops()
+
+
+@router.get(
+    path="/{workshop_id}",
+    response_model=WorkshopDetail,
+    status_code=status.HTTP_200_OK
+)
+@inject
+async def get_workshop_detail(
+    request: Request,
+    response: Response,
+    headers: Annotated[HeaderInfo, Header()],
+    workshop_id: uuid.UUID,
+    workshop_handler: WorkshopHandler = Depends(Provide[Container.workshop_handler]),
+) -> WorkshopDetail:
+    """
+
+    :param request:
+    :param response:
+    :param headers:
+    :param workshop_id:
+    :param workshop_handler:
+    :return:
+    """
+    response.headers["Content-Language"] = headers.accept_language
+    return await workshop_handler.get_workshop_detail(workshop_id=workshop_id)
 
 
 @router.post(
@@ -166,28 +190,4 @@ async def unregister_workshop(
     :return:
     """
     await workshop_handler.unregister_workshop(workshop_id=workshop_id)
-
-
-@router.get(
-    path="/my_workshops",
-    status_code=status.HTTP_200_OK,
-    response_model=WorkshopRegisteredList,
-    dependencies=[check_access_token],
-)
-@inject
-async def get_my_workshops(
-    request: Request,
-    response: Response,
-    headers: Annotated[HeaderInfo, Header()],
-    workshop_handler: WorkshopHandler = Depends(Provide[Container.workshop_handler]),
-) -> WorkshopRegisteredList:
-    """
-
-    :param request:
-    :param response:
-    :param headers:
-    :param workshop_handler:
-    :return:
-    """
-    return await workshop_handler.get_my_workshops()
 

@@ -6,6 +6,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from django.core.cache import BaseCache, cache
+from django.db import IntegrityError
 
 from portal.apps.account.models import Account
 from portal.apps.instructor.models import Instructor
@@ -129,8 +130,9 @@ class WorkshopHandler:
         :return:
         """
         account: Account = self._api_context.account
+        time_slot_obj: WorkshopTimeSlot = await WorkshopTimeSlot.objects.aget(id=workshop.time_slot_id)
         filter_workshops = Workshop.objects.filter(
-            time_slot=workshop.time_slot,
+            time_slot=time_slot_obj,
             is_removed=False
         ).all()
         async for filter_workshop in filter_workshops:
@@ -155,11 +157,32 @@ class WorkshopHandler:
                 status_code=400,
                 message="You have already registered for a workshop at this time slot."
             )
-        workshop_registration: WorkshopRegistration = WorkshopRegistration(
+        if workshop.participants_limit <= await self.get_workshop_participants_count(workshop_id=workshop_id):
+            raise APIException(
+                status_code=400,
+                message="The workshop is full."
+            )
+        # Check if the user has already registered for the workshop and unregistered
+        # If so, update the registration
+        workshop_registration: WorkshopRegistration = await WorkshopRegistration.all_objects.filter(
             workshop=workshop,
-            account=self._api_context.account
-        )
-        await workshop_registration.asave()
+            account=self._api_context.account,
+        ).afirst()
+        if workshop_registration:
+            workshop_registration.is_removed = False
+            workshop_registration.unregistered_at = None
+            await workshop_registration.asave()
+            return
+        try:
+            await WorkshopRegistration.objects.acreate(
+                workshop=workshop,
+                account=self._api_context.account
+            )
+        except IntegrityError:
+            raise APIException(
+                status_code=400,
+                message="You have already registered for this workshop."
+            )
 
     async def unregister_workshop(self, workshop_id: uuid.UUID) -> None:
         """
@@ -169,10 +192,9 @@ class WorkshopHandler:
         :return:
         """
         workshop: Workshop = await Workshop.objects.aget(id=workshop_id)
-        workshop_registration: WorkshopRegistration = await WorkshopRegistration.objects.filter(
+        workshop_registration: WorkshopRegistration = await WorkshopRegistration.all_objects.filter(
             workshop=workshop,
-            account=self._api_context.account,
-            is_removed=False
+            account=self._api_context.account
         ).afirst()
         if not workshop_registration:
             raise APIException(
@@ -245,7 +267,8 @@ class WorkshopHandler:
                     ),
                     start_datetime=start_datetime_with_tz,
                     end_datetime=end_datetime_with_tz,
-                    is_registered=True
+                    is_registered=True,
+                    slido_url=workshop.slido_url
                 )
             )
 

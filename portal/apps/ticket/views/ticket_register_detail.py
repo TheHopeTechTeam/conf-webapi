@@ -5,20 +5,13 @@ from django.contrib import admin
 from wagtail.admin.panels import ObjectList, FieldPanel
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin
+from wagtail_modeladmin.views import CreateView, EditView
 
 from portal.apps.ticket.models import TicketRegisterDetail
 
 
 class TicketRegisterDetailPermission(PermissionHelper):
     """TicketRegisterDetailPermission"""
-
-    def user_can_create(self, user):
-        """
-
-        :param user:
-        :return:
-        """
-        return False
 
     def user_can_copy_obj(self, user, obj):
         """
@@ -29,28 +22,111 @@ class TicketRegisterDetailPermission(PermissionHelper):
         """
         return False
 
+    def user_can_delete_obj(self, user, obj):
+        """
+
+        :param user:
+        :param obj:
+        :return:
+        """
+        return False
+
+
+class TicketRegisterDetailCreateView(CreateView):
+    """
+    Ticket Register Detail Create View
+    """
+    def setup(self, request, *args, **kwargs):
+        """
+        Setup
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        super().setup(request, *args, **kwargs)
+        self.edit_handler = self.get_edit_handler()
+
+    def get_edit_handler(self):
+        """
+        Get edit handler
+        :return:
+        """
+        custom_panels = [
+            FieldPanel(field_name="ticket_number"),
+            FieldPanel(field_name="ticket"),
+            FieldPanel(field_name="account"),
+            FieldPanel(field_name="belong_church"),
+            FieldPanel(field_name="identity"),
+            FieldPanel(field_name="registered_at"),
+            FieldPanel(field_name="order_person_name"),
+            FieldPanel(field_name="order_person_phone_number"),
+            FieldPanel(field_name="order_person_email"),
+            FieldPanel(field_name="remark")
+        ]
+        edit_handler = ObjectList(custom_panels)
+        return edit_handler.bind_to_model(self.model_admin.model)
+
+
+class TicketRegisterDetailEditView(EditView):
+    """
+    Ticket Register Detail Edit View
+    """
+
+    def setup(self, request, *args, **kwargs):
+        """
+        Setup
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        super().setup(request, *args, **kwargs)
+        self.edit_handler = self.get_edit_handler()
+
+    def get_edit_handler(self):
+        """
+        Get edit handler
+        :return:
+        """
+        custom_panels = [
+            FieldPanel(field_name="ticket_number", read_only=True),
+            FieldPanel(field_name="ticket", read_only=True),
+            FieldPanel(field_name="account"),
+            FieldPanel(field_name="belong_church"),
+            FieldPanel(field_name="identity"),
+            FieldPanel(field_name="registered_at", read_only=True),
+            FieldPanel(field_name="order_person_name", read_only=True),
+            FieldPanel(field_name="order_person_phone_number", read_only=True),
+            FieldPanel(field_name="order_person_email", read_only=True),
+            FieldPanel(field_name="remark")
+        ]
+        edit_handler = ObjectList(custom_panels)
+        return edit_handler.bind_to_model(self.model_admin.model)
+
 
 class TicketRegisterDetailAdmin(ModelAdmin):
     """
     Ticket Register Detail Model Admin
     """
     model = TicketRegisterDetail
+    base_url_path = "ticket_register_details"
     menu_label = "Ticket Register Detail"
     menu_icon = "folder-open-inverse"
 
-    list_filter = ("ticket",)
+    list_filter = ("ticket", "ticket__ticket_type", "identity")
     list_display = (
         "format_ticket_number",
         "format_ticket",
-        "format_ticket_type",
+        # "format_ticket_type",
         "format_account_display_name",
         "format_account_phone_number",
         "format_belong_church",
         "format_identity"
     )
 
-    search_fields = ("ticket",)
-    ordering = ["ticket"]
+    search_fields = ("ticket_number",)
+    ordering = ["registered_at"]
 
     inspect_view_fields = [
         "ticket_number",
@@ -65,29 +141,16 @@ class TicketRegisterDetailAdmin(ModelAdmin):
         "order_person_email",
         "remark"
     ]
+
+    create_view_class = TicketRegisterDetailCreateView
+    edit_view_class = TicketRegisterDetailEditView
+
     inspect_view_fields_exclude = ["is_removed"]
     inspect_view_enabled = True
 
     index_template_name = "modeladmin/ticket/ticket_register_details/index.html"
 
     permission_helper_class = TicketRegisterDetailPermission
-
-    base_url_path = "ticket_register_details"
-
-    custom_panels = [
-        FieldPanel(field_name="ticket_number", read_only=True),
-        FieldPanel(field_name="ticket", read_only=True),
-        FieldPanel(field_name="account"),
-        FieldPanel(field_name="belong_church"),
-        FieldPanel(field_name="identity"),
-        FieldPanel(field_name="registered_at", read_only=True),
-        FieldPanel(field_name="order_person_name", read_only=True),
-        FieldPanel(field_name="order_person_phone_number", read_only=True),
-        FieldPanel(field_name="order_person_email", read_only=True),
-        FieldPanel(field_name="remark")
-    ]
-
-    edit_handler = ObjectList(custom_panels)
 
     def get_queryset(self, request):
         """

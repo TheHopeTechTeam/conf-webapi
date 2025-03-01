@@ -3,19 +3,18 @@ Workshop serializers
 """
 from datetime import datetime
 from typing import Optional
-from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+from portal.schemas.mixins import UUIDBaseModel
 from portal.serializers.v1.instructor import InstructorBase
 from portal.serializers.v1.location import LocationBase
 
 
-class WorkshopBase(BaseModel):
+class WorkshopBase(UUIDBaseModel):
     """
     Workshop
     """
-    id: UUID = Field(..., description="ID")
     title: str = Field(..., description="Title")
     description: str = Field(..., description="Description")
     location: LocationBase = Field(..., description="Location")
