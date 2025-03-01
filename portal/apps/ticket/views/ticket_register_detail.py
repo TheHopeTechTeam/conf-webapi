@@ -35,6 +35,8 @@ class TicketRegisterDetailPermission(PermissionHelper):
 class TicketRegisterDetailCreateView(CreateView):
     """
     Ticket Register Detail Create View
+
+    Solution: https://stackoverflow.com/questions/73288952/initialize-request-in-get-edit-handler-in-modeladmin-class-in-wagtail
     """
     def setup(self, request, *args, **kwargs):
         """
