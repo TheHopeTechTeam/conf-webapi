@@ -23,7 +23,7 @@ from portal.serializers.v1.workshop import (
     WorkshopSchedule,
     WorkshopScheduleList,
     WorkshopRegistered,
-    WorkshopRegisteredList
+    WorkshopRegisteredList,
 )
 
 
@@ -48,7 +48,7 @@ class WorkshopHandler:
         :return:
         """
         workshop_schedules = []
-        workshop_time_slots = WorkshopTimeSlot.objects.filter(is_removed=False).all()
+        workshop_time_slots = WorkshopTimeSlot.objects.filter(is_removed=False).order_by("start_datetime").all()
         async for workshop_time_slot in workshop_time_slots:
             workshops = Workshop.objects.filter(
                 time_slot=workshop_time_slot,
@@ -241,11 +241,15 @@ class WorkshopHandler:
         :return:
         """
         account: Account = self._api_context.account
-        workshop_registrations = WorkshopRegistration.objects.filter(
-            account=account,
-            is_removed=False,
-            unregistered_at=None
-        ).all()
+        workshop_registrations = (
+            WorkshopRegistration.objects.filter(
+                account=account,
+                is_removed=False,
+                unregistered_at=None
+            )
+            .order_by("workshop__time_slot__start_datetime")
+            .all()
+        )
         my_workshops = []
         async for workshop_registration in workshop_registrations:
             workshop: Workshop = await Workshop.objects.aget(id=workshop_registration.workshop_id)

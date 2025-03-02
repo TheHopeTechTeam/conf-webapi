@@ -16,12 +16,19 @@ class EventScheduleBase(UUIDBaseModel):
     title: str = Field(..., description="Title")
     description: Optional[str] = Field(None, description="Description")
     start_time: datetime = Field(..., serialization_alias="startTime", description="Start Time")
-    color: Optional[str] = Field(None, description="Color")
+    background_color: Optional[str] = Field(None, serialization_alias="backgroundColor", description="Color")
 
+
+class EventScheduleItem(BaseModel):
+    """
+    Event Schedule Item
+    """
+    date: datetime = Field(..., title="Date")
+    weekday: str = Field(..., title="Week Day")
+    schedules: list[EventScheduleBase] = Field(..., title="Schedules")
 
 class EventScheduleList(BaseModel):
     """
     Event Schedule List
     """
-    schedules: list[EventScheduleBase] = Field(..., title="Schedules")
-
+    schedules: list[EventScheduleItem] = Field(..., title="Schedules")
