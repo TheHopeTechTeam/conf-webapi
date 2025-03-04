@@ -34,7 +34,7 @@ class EventInfoHandler:
                     title=event_schedule.title,
                     description=event_schedule.description,
                     start_time=event_schedule.start_time,
-                    background_color=event_schedule.color
+                    background_color=event_schedule.background_color
                 )
             )
         for start_time, schedules in event_schedule_map.items():
