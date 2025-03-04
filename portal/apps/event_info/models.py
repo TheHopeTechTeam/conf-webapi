@@ -21,7 +21,6 @@ class EventSchedule(index.Indexed, UUIDModel, Orderable):
     start_time = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     sort_order = models.PositiveIntegerField(default=count)
-    color = models.CharField(max_length=7, null=True, blank=True)
     text_color = models.CharField(max_length=7, null=True, blank=True)
     background_color = models.CharField(max_length=7, null=True, blank=True)
 
