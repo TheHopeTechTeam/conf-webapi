@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 from portal.libs.consts.enums import LoginMethod
 from portal.schemas.mixins import UUIDBaseModel
+from portal.serializers.v1.ticket import TicketBase
 
 
 class AccountLogin(BaseModel):
@@ -55,10 +56,7 @@ class AccountDetail(AccountBase):
     """
     Account detail
     """
-    ticket_number: Optional[str] = Field(default=None, serialization_alias="ticketNumber", description="Ticket Number")
-    ticket_type: Optional[str] = Field(default=None, serialization_alias="ticketType", description="Ticket Type")
-    belong_church: Optional[str] = Field(default=None, serialization_alias="belongChurch", description="Belong Church")
-    identity: Optional[str] = Field(default=None, description="Identity")
+    ticket_detail: Optional[TicketBase] = Field(..., serialization_alias="ticketDetail", description="Ticket Detail")
 
 
 class AccountUpdate(BaseModel):

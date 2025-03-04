@@ -19,9 +19,11 @@ class EventSchedule(index.Indexed, UUIDModel, Orderable):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     start_time = models.DateTimeField()
-    color = models.CharField(max_length=7, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     sort_order = models.PositiveIntegerField(default=count)
+    color = models.CharField(max_length=7, null=True, blank=True)
+    text_color = models.CharField(max_length=7, null=True, blank=True)
+    background_color = models.CharField(max_length=7, null=True, blank=True)
 
     @property
     def pk(self) -> str:

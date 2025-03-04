@@ -18,6 +18,7 @@ from portal.libs.contexts.api_context import get_api_context, APIContext
 from portal.libs.logger import logger
 from portal.schemas.auth import FirebaseTokenPayload
 from portal.serializers.v1.account import AccountLogin, AccountUpdate, LoginResponse, AccountDetail
+from portal.serializers.v1.ticket import TicketBase
 
 
 class AccountHandler:
@@ -139,15 +140,21 @@ class AccountHandler:
             )
         ticket_obj = await Ticket.objects.filter(id=ticket_register_detail_obj.ticket_id).afirst()
         ticket_type_obj = await TicketType.objects.filter(id=ticket_obj.ticket_type_id).afirst()
+        ticket_detail = TicketBase(
+            title=ticket_obj.title,
+            number=ticket_register_detail_obj.ticket_number,
+            ticket_type=ticket_type_obj.name,
+            belong_church=ticket_register_detail_obj.belong_church,
+            identity=ticket_register_detail_obj.identity,
+            text_color=ticket_obj.text_color,
+            background_color=ticket_obj.background_color,
+        )
         account = AccountDetail(
             id=account_obj.id,
             email=account_obj.email,
             phone_number=account_obj.phone_number,
             display_name=account_obj.display_name,
-            ticket_number=ticket_register_detail_obj.ticket_number,
-            ticket_type=ticket_type_obj.name,
-            belong_church=ticket_register_detail_obj.belong_church,
-            identity=ticket_register_detail_obj.identity
+            ticket_detail=ticket_detail
         )
         return account
 

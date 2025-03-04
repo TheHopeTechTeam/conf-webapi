@@ -218,7 +218,7 @@ class WorkshopHandler:
         ).all()
         registered_workshops = {}
         async for workshop_registration in workshop_registrations:
-            registered_workshops[workshop_registration.workshop_id.hex] = True if not workshop_registration.unregistered_at else False
+            registered_workshops[str(workshop_registration.workshop_id)] = True if not workshop_registration.unregistered_at else False
         return registered_workshops
 
     @staticmethod

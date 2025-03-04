@@ -1,0 +1,19 @@
+"""
+Ticket serializers
+"""
+from typing import Optional
+
+from pydantic import BaseModel, Field
+
+
+class TicketBase(BaseModel):
+    """
+    Ticket
+    """
+    title: str = Field(..., description="Ticket title")
+    number: str = Field(..., description="Ticket number")
+    ticket_type: str = Field(..., serialization_alias="type", description="Ticket type")
+    belong_church: str = Field(..., serialization_alias="belongChurch", description="Belong church")
+    identity: str = Field(..., description="Identity")
+    text_color: Optional[str] = Field(None, serialization_alias="textColor", description="Text color")
+    background_color: Optional[str] = Field(None, serialization_alias="backgroundColor", description="Background color")

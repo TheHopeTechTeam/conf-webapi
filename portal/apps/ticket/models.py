@@ -40,6 +40,8 @@ class Ticket(index.Indexed, UUIDModel, SoftDeletableModel):
     conference = models.ForeignKey('conference.Conference', on_delete=models.CASCADE)
     ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    text_color = models.CharField(max_length=7, null=True, blank=True)
+    background_color = models.CharField(max_length=7, null=True, blank=True)
 
     @property
     def pk(self) -> str:
