@@ -1,6 +1,7 @@
 """
 Event Info Wagtail Hooks
 """
+from django.contrib import admin
 from django.utils.html import format_html
 from wagtail.admin.panels import FieldPanel, ObjectList
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
@@ -19,7 +20,13 @@ class EventScheduleModelAdmin(ModelAdmin):
     # menu_icon = "folder-open-inverse"
     model = EventSchedule
 
-    list_display = ("title", "description", "start_time", "conference")
+    list_display = (
+        "title",
+        "description",
+        "start_time",
+        "conference",
+        "format_color",
+    )
     list_filter = ("conference",)
 
     search_fields = ("title", "description", "conference")
@@ -29,6 +36,8 @@ class EventScheduleModelAdmin(ModelAdmin):
         "description",
         "start_time",
         "conference",
+        "text_color",
+        "background_color",
     ]
     inspect_view_fields_exclude = ["is_removed"]
     inspect_view_enabled = True
@@ -55,3 +64,29 @@ class EventScheduleModelAdmin(ModelAdmin):
     ]
 
     edit_handler = ObjectList(custom_panels)
+
+    @admin.display(description="Color")
+    def format_color(self, obj):
+        """
+        Format text color
+        """
+        if not obj.text_color and not obj.background_color:
+            return "N/A"
+        if obj.text_color and not obj.background_color:
+            return format_html(
+                f'<span style="color: {obj.text_color};">'
+                f'{obj.text_color}'
+                f'</span>'
+            )
+        if not obj.text_color and obj.background_color:
+            return format_html(
+                f'<span style="background-color: {obj.background_color}; border-radius: 5px; padding: 5px;">'
+                f'{obj.background_color}'
+                f'</span>'
+            )
+        return format_html(
+            f'<span style="color: {obj.text_color}; background-color: {obj.background_color}; border-radius: 5px; padding: 5px;">'
+            f'text color: {obj.text_color}, background color: {obj.background_color}'
+            f'</span>'
+        )
+

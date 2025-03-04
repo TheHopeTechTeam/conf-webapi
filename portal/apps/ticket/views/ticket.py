@@ -1,6 +1,7 @@
 """
 Ticket Model Admin
 """
+from django.contrib import admin
 from django.utils.html import format_html
 from wagtail.admin.panels import FieldPanel, ObjectList
 from wagtail_modeladmin.options import ModelAdmin
@@ -15,7 +16,12 @@ class TicketAdmin(ModelAdmin):
     model = Ticket
     menu_label = "Tickets"
     menu_icon = "tag"
-    list_display = ("title", "ticket_type", "conference")
+    list_display = (
+        "title",
+        "ticket_type",
+        "conference",
+        "format_color",
+    )
 
     inspect_view_fields_exclude = ["is_removed"]
     inspect_view_enabled = True
@@ -45,3 +51,28 @@ class TicketAdmin(ModelAdmin):
     ]
 
     edit_handler = ObjectList(custom_panels)
+
+    @admin.display(description="Color")
+    def format_color(self, obj):
+        """
+        Format text color
+        """
+        if not obj.text_color and not obj.background_color:
+            return "N/A"
+        if obj.text_color and not obj.background_color:
+            return format_html(
+                f'<span style="color: {obj.text_color};">'
+                f'{obj.text_color}'
+                f'</span>'
+            )
+        if not obj.text_color and obj.background_color:
+            return format_html(
+                f'<span style="background-color: {obj.background_color}; border-radius: 5px; padding: 5px;">'
+                f'{obj.background_color}'
+                f'</span>'
+            )
+        return format_html(
+            f'<span style="color: {obj.text_color}; background-color: {obj.background_color}; border-radius: 5px; padding: 5px;">'
+            f'text color: {obj.text_color}, background color: {obj.background_color}'
+            f'</span>'
+        )
