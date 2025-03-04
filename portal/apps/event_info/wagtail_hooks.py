@@ -33,18 +33,23 @@ class EventScheduleModelAdmin(ModelAdmin):
     inspect_view_fields_exclude = ["is_removed"]
     inspect_view_enabled = True
 
+    _help_text = format_html(
+        "Color in hex format. e.g. #FFFFFF for white. "
+        "Visit <a href='https://www.w3schools.com/colors/colors_picker.asp' target='_blank'>HTML Color Picker</a> for choosing a color."
+    )
     custom_panels = [
         FieldPanel("conference"),
         FieldPanel("title"),
         FieldPanel("description"),
         FieldPanel("start_time"),
         FieldPanel(
-            field_name="color",
-            # widget=widgets.
-            help_text=format_html(
-                "Color in hex format. e.g. #FFFFFF for white. "
-                "Visit <a href='https://www.w3schools.com/colors/colors_picker.asp' target='_blank'>HTML Color Picker</a> for choosing a color."
-            ),
+            field_name="text_color",
+            help_text=_help_text,
+            attrs={"placeholder": "#FFFFFF"},
+        ),
+        FieldPanel(
+            field_name="background_color",
+            help_text=_help_text,
             attrs={"placeholder": "#FFFFFF"},
         ),
     ]
