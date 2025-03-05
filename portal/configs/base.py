@@ -140,7 +140,7 @@ INSTALLED_APPS = [
     "portal.apps.conference",
     "portal.apps.event_info",
     "portal.apps.faq",
-    "portal.apps.fcm_device",
+    # "portal.apps.fcm_device",
     "portal.apps.feedback",
     "portal.apps.home",
     "portal.apps.instructor",
