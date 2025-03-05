@@ -6,6 +6,7 @@ import uuid
 from portal.apps.conference.models import Conference
 from portal.apps.location.models import Location
 from portal.handlers import FileHandler
+from portal.libs.consts.enums import Rendition
 from portal.serializers.v1.conference import ConferenceBase, ConferenceDetail, ConferenceList
 from portal.serializers.v1.instructor import InstructorBase
 from portal.serializers.v1.location import LocationBase
@@ -65,7 +66,10 @@ class ConferenceHandler:
                     name=instructor.name,
                     title=instructor.title,
                     bio=instructor.bio,
-                    image_url=await self._file_handler.get_file_url(image_id=instructor.image_id)
+                    image_url=await self._file_handler.get_file_url(
+                        image_id=instructor.image_id,
+                        rendition=Rendition.MAX_100x100.value
+                    )
                 )
             )
 
