@@ -17,6 +17,8 @@ class MenuOrder(IntEnum):
     Workshop = 106
     Ticket = 107
     FAQ = 108
+    Testimony = 109
+    Feedback = 110
 
 
 class LoginMethod(Enum):

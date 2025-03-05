@@ -56,7 +56,7 @@ class AccountDetail(AccountBase):
     """
     Account detail
     """
-    ticket_detail: Optional[TicketBase] = Field(..., serialization_alias="ticketDetail", description="Ticket Detail")
+    ticket_detail: Optional[TicketBase] = Field(default=None, serialization_alias="ticketDetail", description="Ticket Detail")
 
 
 class AccountUpdate(BaseModel):

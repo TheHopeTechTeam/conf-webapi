@@ -52,6 +52,9 @@ AWS_ACCESS_KEY_ID: str = env("AWS_ACCESS_KEY_ID", default="")
 AWS_SECRET_ACCESS_KEY: str = env("AWS_SECRET_ACCESS_KEY", default="")
 AWS_STORAGE_BUCKET_NAME: str = APP_NAME
 AWS_S3_REGION_NAME: str = env("AWS_S3_REGION_NAME", default="")
+AWS_S3_OBJECT_PARAMETERS: dict = {
+    "CacheControl": "max-age=86400",
+}
 
 REDIS_URL: str = env(var="REDIS_URL", default="redis://localhost:6379/0")
 CACHES = {
@@ -130,14 +133,14 @@ INSTALLED_APPS = [
     "modelcluster",
     "taggit",
     "wagtail_modeladmin",
-    # wagtail end
     # auditlog
     "auditlog",
-    # apps
+    # portal apps
     "portal.apps.account",
     "portal.apps.conference",
     "portal.apps.event_info",
     "portal.apps.faq",
+    "portal.apps.fcm_device",
     "portal.apps.feedback",
     "portal.apps.home",
     "portal.apps.instructor",
@@ -147,7 +150,6 @@ INSTALLED_APPS = [
     "portal.apps.testimony",
     "portal.apps.ticket",
     "portal.apps.workshop"
-    # apps end
 ]
 
 MIDDLEWARE = [

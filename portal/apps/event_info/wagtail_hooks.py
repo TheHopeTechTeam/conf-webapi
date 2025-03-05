@@ -17,7 +17,7 @@ class EventScheduleModelAdmin(ModelAdmin):
     """
     menu_label = "Event Schedules"
     menu_order = MenuOrder.EventInfo
-    # menu_icon = "folder-open-inverse"
+    menu_icon = "calendar"
     model = EventSchedule
 
     list_display = (

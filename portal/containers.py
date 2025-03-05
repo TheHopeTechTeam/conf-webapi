@@ -8,6 +8,7 @@ from portal.handlers import (
     ConferenceHandler,
     EventInfoHandler,
     FAQHandler,
+    FCMDeviceHandler,
     FeedbackHandler,
     FileHandler,
     TestimonyHandler,
@@ -30,22 +31,14 @@ class Container(containers.DeclarativeContainer):
 
     # [handlers]
     file_handler = providers.Factory(FileHandler)
-    account_handler = providers.Factory(
-        AccountHandler,
-        # redis=redis_pool
-    )
+    account_handler = providers.Factory(AccountHandler)
     conference_handler = providers.Factory(
         ConferenceHandler,
         file_handler=file_handler
     )
-    event_info_handler = providers.Factory(
-        EventInfoHandler,
-        # redis=redis_pool
-    )
-    faq_handler = providers.Factory(
-        FAQHandler,
-        # redis=redis_pool
-    )
+    event_info_handler = providers.Factory(EventInfoHandler)
+    faq_handler = providers.Factory(FAQHandler)
+    fcm_device_handler = providers.Factory(FCMDeviceHandler)
     feedback_handler = providers.Factory(FeedbackHandler)
     testimony_handler = providers.Factory(TestimonyHandler)
     workshop_handler = providers.Factory(

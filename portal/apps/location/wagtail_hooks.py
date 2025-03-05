@@ -12,7 +12,7 @@ class LocationModelAdmin(ModelAdmin):
     model = Location
     base_url_path = "locations"
     menu_label = "Locations"
-    menu_icon = "globe"
+    menu_icon = "thumbtack"
     menu_order = MenuOrder.Location
     add_to_settings_menu = False
     add_to_admin_menu = True
