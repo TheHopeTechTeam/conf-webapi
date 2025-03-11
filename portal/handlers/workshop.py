@@ -68,7 +68,11 @@ class WorkshopHandler:
                             name=location.name,
                             address=location.address,
                             floor=location.floor,
-                            room_number=location.room_number
+                            room_number=location.room_number,
+                            image_url=await self._file_handler.get_file_url(
+                                image_id=location.image_id,
+                                rendition=Rendition.MAX_800x800.value
+                            )
                         ),
                         slido_url=workshop.slido_url
                     )
@@ -106,7 +110,10 @@ class WorkshopHandler:
                 address=location.address,
                 floor=location.floor,
                 room_number=location.room_number,
-                image_url=await self._file_handler.get_file_url(image_id=location.image_id, rendition=Rendition.MAX_800x800.value)
+                image_url=await self._file_handler.get_file_url(
+                    image_id=location.image_id,
+                    rendition=Rendition.MAX_800x800.value
+                )
             ),
             start_datetime=start_datetime_with_tz,
             end_datetime=end_datetime_with_tz,
@@ -115,11 +122,17 @@ class WorkshopHandler:
                 name=instructor.name,
                 title=instructor.title,
                 bio=instructor.bio,
-                image_url=await self._file_handler.get_file_url(image_id=instructor.image_id, rendition=Rendition.MAX_100x100.value)
+                image_url=await self._file_handler.get_file_url(
+                    image_id=instructor.image_id,
+                    rendition=Rendition.MAX_100x100.value
+                )
             ),
             participants_limit=workshop.participants_limit,
             is_full=workshop.participants_limit <= await self.get_workshop_participants_count(workshop_id=workshop_id),
-            image_url=await self._file_handler.get_file_url(image_id=workshop.image_id, rendition=Rendition.MAX_500x500.value),
+            image_url=await self._file_handler.get_file_url(
+                image_id=workshop.image_id,
+                rendition=Rendition.MAX_500x500.value
+            ),
             slido_url=workshop.slido_url
         )
 
@@ -268,7 +281,11 @@ class WorkshopHandler:
                         name=location.name,
                         address=location.address,
                         floor=location.floor,
-                        room_number=location.room_number
+                        room_number=location.room_number,
+                        image_url=await self._file_handler.get_file_url(
+                            image_id=location.image_id,
+                            rendition=Rendition.MAX_800x800.value
+                        )
                     ),
                     start_datetime=start_datetime_with_tz,
                     end_datetime=end_datetime_with_tz,

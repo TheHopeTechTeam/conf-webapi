@@ -83,7 +83,11 @@ class ConferenceHandler:
                 id=location_obj.id,
                 name=location_obj.name,
                 address=location_obj.address,
-                floor=location_obj.floor
+                floor=location_obj.floor,
+                image_url=await self._file_handler.get_file_url(
+                    image_id=location_obj.image_id,
+                    rendition=Rendition.MAX_1000x1000.value
+                )
             ),
             instructors=instructor_list
         )
