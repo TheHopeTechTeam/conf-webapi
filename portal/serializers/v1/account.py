@@ -25,8 +25,8 @@ class AccountLogin(BaseModel):
         description="Firebase token",
         frozen=True
     )
-    device_id: str = Field(
-        ...,
+    device_id: Optional[str] = Field(
+        None,
         serialization_alias="deviceId",
         description="Device ID",
         frozen=True
