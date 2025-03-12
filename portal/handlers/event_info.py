@@ -3,6 +3,7 @@ EventInfoHandler
 """
 import uuid
 from collections import defaultdict
+from zoneinfo import ZoneInfo
 
 from portal.apps.event_info.models import EventSchedule
 
@@ -28,12 +29,13 @@ class EventInfoHandler:
             .order_by("start_time")
         )
         async for event_schedule in event_schedules:
-            event_schedule_map[event_schedule.start_time.date()].append(
+            start_time_with_tz = event_schedule.start_time.astimezone(tz=ZoneInfo(event_schedule.time_zone))
+            event_schedule_map[start_time_with_tz.date()].append(
                 EventScheduleBase(
                     id=event_schedule.id,
                     title=event_schedule.title,
                     description=event_schedule.description,
-                    start_time=event_schedule.start_time,
+                    start_time=start_time_with_tz,
                     background_color=event_schedule.background_color
                 )
             )

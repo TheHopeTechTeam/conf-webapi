@@ -6,6 +6,7 @@ from zoneinfo import ZoneInfo
 
 from dateutil import parser
 from django import forms
+from django.utils.html import format_html
 from wagtail.admin import widgets
 from wagtail.admin.forms import WagtailAdminModelForm
 
@@ -23,7 +24,10 @@ class WorkshopTimeSlotForm(WagtailAdminModelForm):
             attrs={"placeholder": "YYYY-MM-DD HH:MM"},
             format="%Y-%m-%d %H:%M",
         ),
-        help_text="Please enter UTC time, system will automatically convert to selected time zone, but here only show UTC time",
+        help_text=format_html(
+            "Please enter UTC time, system will automatically convert to selected time zone, but here only show UTC time. "
+            "<br>Vist <a href='https://www.timeanddate.com/worldclock/converter.html' target='_blank'>Time Zone Converter</a> for converting time zone."
+        ),
     )
     end_datetime = forms.DateTimeField(
         required=True,
@@ -32,7 +36,10 @@ class WorkshopTimeSlotForm(WagtailAdminModelForm):
             attrs={"placeholder": "YYYY-MM-DD HH:MM"},
             format="%Y-%m-%d %H:%M",
         ),
-        help_text="Please enter UTC time, system will automatically convert to selected time zone, but here only show UTC time",
+        help_text=format_html(
+            "Please enter UTC time, system will automatically convert to selected time zone, but here only show UTC time. "
+            "<br>Vist <a href='https://www.timeanddate.com/worldclock/converter.html' target='_blank'>Time Zone Converter</a> for converting time zone."
+        ),
     )
 
     def clean_start_datetime(self):
