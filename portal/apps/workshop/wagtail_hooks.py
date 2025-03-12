@@ -6,6 +6,7 @@ from wagtail_modeladmin.options import ModelAdminGroup, modeladmin_register
 from portal.libs.consts.enums import MenuOrder
 from .views import (
     WorkshopModelAdmin,
+    WorkshopRegistrationModelAdmin,
     WorkshopTimeSlotModelAdmin,
 )
 
@@ -21,4 +22,5 @@ class WorkshopModelAdminGroup(ModelAdminGroup):
     items = (
         WorkshopTimeSlotModelAdmin,
         WorkshopModelAdmin,
+        WorkshopRegistrationModelAdmin,
     )
