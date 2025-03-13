@@ -36,15 +36,6 @@ class WorkshopRegistrationPermission(PermissionHelper):
         """
         return False
 
-    def user_can_delete_obj(self, user, obj):
-        """
-
-        :param user:
-        :param obj:
-        :return:
-        """
-        return False
-
 
 class WorkshopRegistrationModelAdmin(ModelAdmin):
     """Workshop Model Admin"""
