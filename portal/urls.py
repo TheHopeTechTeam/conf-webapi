@@ -6,13 +6,13 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 Examples:
 Function views
     1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+    2. Add a URL to urlpatterns:  path("", views.home, name="home")
 Class-based views
     1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+    2. Add a URL to urlpatterns:  path("", Home.as_view(), name="home")
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+    2. Add a URL to urlpatterns:  path("blog/", include("blog.urls"))
 """
 from django.conf import settings
 from django.contrib import admin
@@ -21,14 +21,16 @@ from django.views.generic import RedirectView
 from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
+from wagtailautocomplete.urls.admin import urlpatterns as wagtailautocomplete_urls
 
 from portal.apps.search import views as search_views
 
 urlpatterns = [
     path("", RedirectView.as_view(url="/cms/")),
-    path('django_admin/', admin.site.urls),
-    path('cms/', include(wagtailadmin_urls)),
-    path('documents/', include(wagtaildocs_urls)),
+    path("django_admin/", admin.site.urls),
+    path("cms/autocomplete/", include(wagtailautocomplete_urls)),
+    path("cms/", include(wagtailadmin_urls)),
+    path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
 ]
 
@@ -47,5 +49,5 @@ urlpatterns += [
     # path("", include(wagtail_urls)),
     # Alternatively, if you want Wagtail pages to be served from a subpath
     # of your site, rather than the site root:
-    path('pages/', include(wagtail_urls)),
+    path("pages/", include(wagtail_urls)),
 ]

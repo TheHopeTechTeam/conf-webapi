@@ -6,6 +6,7 @@ from wagtail.admin.panels import ObjectList, FieldPanel
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin
 from wagtail_modeladmin.views import CreateView, EditView
+from wagtailautocomplete.edit_handlers import AutocompletePanel
 
 from portal.apps.ticket.models import TicketRegisterDetail
 
@@ -14,15 +15,6 @@ class TicketRegisterDetailPermission(PermissionHelper):
     """TicketRegisterDetailPermission"""
 
     def user_can_copy_obj(self, user, obj):
-        """
-
-        :param user:
-        :param obj:
-        :return:
-        """
-        return False
-
-    def user_can_delete_obj(self, user, obj):
         """
 
         :param user:
@@ -57,7 +49,7 @@ class TicketRegisterDetailCreateView(CreateView):
         custom_panels = [
             FieldPanel(field_name="ticket_number"),
             FieldPanel(field_name="ticket"),
-            FieldPanel(field_name="account"),
+            AutocompletePanel(field_name="account"),
             FieldPanel(field_name="belong_church"),
             FieldPanel(field_name="identity"),
             FieldPanel(field_name="registered_at"),
@@ -94,7 +86,7 @@ class TicketRegisterDetailEditView(EditView):
         custom_panels = [
             FieldPanel(field_name="ticket_number", read_only=True),
             FieldPanel(field_name="ticket", read_only=True),
-            FieldPanel(field_name="account"),
+            AutocompletePanel(field_name="account"),
             FieldPanel(field_name="belong_church"),
             FieldPanel(field_name="identity"),
             FieldPanel(field_name="registered_at", read_only=True),

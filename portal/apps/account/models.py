@@ -37,6 +37,8 @@ class Account(index.Indexed, UUIDModel):
     is_service = models.BooleanField(default=False, db_comment="Is service")
     remark = models.TextField(blank=True, null=True)
 
+    autocomplete_search_field = "phone_number"
+
     @property
     def pk(self) -> str:
         """
@@ -45,10 +47,18 @@ class Account(index.Indexed, UUIDModel):
         """
         return str(self.id)
 
-    def __str__(self):
+    @property
+    def title(self) -> str:
+        """
+
+        :return:
+        """
         if not self.display_name:
-            return f"Unknown ({self.phone_number})"
-        return f"{self.display_name} ({self.phone_number})"
+            return f"{self.phone_number} (Unknown)"
+        return f"{self.phone_number} ({self.display_name})"
+
+    def __str__(self):
+        return self.title
 
     def delete(
         self,

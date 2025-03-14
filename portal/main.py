@@ -2,20 +2,51 @@
 main application
 """
 import firebase_admin
+import sentry_sdk
 from django.conf import settings
-from django.core.asgi import get_asgi_application
 from fastapi import FastAPI, Request, status, HTTPException
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import JSONResponse
 from firebase_admin import credentials
+from sentry_sdk.integrations.asyncpg import AsyncPGIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.fastapi import FastApiIntegration
+from sentry_sdk.integrations.httpx import HttpxIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from starlette.middleware.cors import CORSMiddleware
 
+from portal.asgi_handler import get_asgi_application
 from portal.containers import Container
 from portal.libs.utils.lifespan import lifespan
 from portal.middlewares import CustomHTTPMiddleware
 from portal.routers import api_router
 
 __all__ = ["app"]
+
+
+def setup_tracing():
+    """
+    Setup tracing
+    :return:
+    """
+    if not settings.SENTRY_URL:
+        return
+    sentry_sdk.init(
+        dsn=settings.SENTRY_URL,
+        integrations=[
+            AsyncPGIntegration(),
+            DjangoIntegration(),
+            FastApiIntegration(),
+            HttpxIntegration(),
+            RedisIntegration(),
+            SqlalchemyIntegration(),
+        ],
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+        environment=settings.ENV.upper(),
+        enable_tracing=True,
+    )
 
 
 def register_router(application: FastAPI) -> None:
@@ -62,6 +93,7 @@ def get_application(mount_application) -> FastAPI:
     """
     get application
     """
+    setup_tracing()
     application = FastAPI(
         lifespan=lifespan,
         swagger_ui_parameters={

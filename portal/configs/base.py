@@ -106,6 +106,9 @@ except FileNotFoundError:
         logger.warning(f"Failed to load Google Firebase certificate: {e}")
         GOOGLE_FIREBASE_CERTIFICATE = {}
 
+# [Sentry]
+SENTRY_URL: str = env("SENTRY_URL", default="")
+
 # ------------------------------------------------------------------------------
 
 # Application definition
@@ -133,6 +136,7 @@ INSTALLED_APPS = [
     "modelcluster",
     "taggit",
     "wagtail_modeladmin",
+    "wagtailautocomplete",
     # auditlog
     "auditlog",
     # portal apps
@@ -164,6 +168,8 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     # auditlog
     "auditlog.middleware.AuditlogMiddleware",
+    # custom middleware
+    "portal.middlewares.HandleRequestAbortedMiddleware",
 ]
 
 ROOT_URLCONF = "portal.urls"
@@ -231,20 +237,19 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Logging
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "DEBUG" if ENV != "prod" else "INFO",
-    },
-}
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "handlers": {
+#         "console": {
+#             "class": "logging.StreamHandler",
+#         },
+#     },
+#     "root": {
+#         "handlers": ["console"],
+#         "level": "DEBUG" if ENV != "prod" else "INFO",
+#     },
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
