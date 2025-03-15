@@ -77,6 +77,7 @@ DATABASE_USER: str = env("DATABASE_USER", default="postgres")
 DATABASE_PASSWORD: str = env("DATABASE_PASSWORD", default="")
 DATABASE_PORT: str = env("DATABASE_PORT", default="5432")
 DATABASE_NAME: str = env("DATABASE_NAME", default="postgres")
+DATABASE_SCHEMA: str = env("DATABASE_SCHEMA", default="public")
 
 # [Django]
 # [[Cross Site Request Forgery]]
@@ -237,19 +238,20 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Logging
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "handlers": {
-#         "console": {
-#             "class": "logging.StreamHandler",
-#         },
-#     },
-#     "root": {
-#         "handlers": ["console"],
-#         "level": "DEBUG" if ENV != "prod" else "INFO",
-#     },
-# }
+if ENV.lower() == "dev":
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+            },
+        },
+        "root": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
