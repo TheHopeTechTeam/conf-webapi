@@ -19,6 +19,7 @@ class WorkshopBase(UUIDBaseModel):
     description: str = Field(..., description="Description")
     location: LocationBase = Field(..., description="Location")
     slido_url: Optional[str] = Field(default=None, serialization_alias="slidoUrl", description="Slido URL")
+    is_full: bool = Field(..., serialization_alias="isFull", description="The number of participants has reached the upper limit")
 
 
 class WorkshopDetail(WorkshopBase):
@@ -30,7 +31,6 @@ class WorkshopDetail(WorkshopBase):
     end_datetime: datetime = Field(..., serialization_alias="endDatetime", description="End Date and Time")
     instructor: InstructorBase = Field(..., description="Instructor")
     participants_limit: int = Field(..., serialization_alias="participantsLimit", description="Participants Limit")
-    is_full: bool = Field(..., serialization_alias="isFull", description="The number of participants has reached the upper limit")
     image_url: Optional[str] = Field(default=None, serialization_alias="imageUrl", description="Image URL")
 
 

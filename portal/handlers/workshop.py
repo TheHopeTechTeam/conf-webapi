@@ -74,7 +74,8 @@ class WorkshopHandler:
                                 rendition=Rendition.MAX_800x800.value
                             )
                         ),
-                        slido_url=workshop.slido_url
+                        slido_url=workshop.slido_url,
+                        is_full=workshop.participants_limit <= await self.get_workshop_participants_count(workshop_id=workshop.id)
                     )
                 )
             workshop_schedules.append(

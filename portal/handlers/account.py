@@ -154,7 +154,8 @@ class AccountHandler:
             email=account_obj.email,
             phone_number=account_obj.phone_number,
             display_name=account_obj.display_name,
-            ticket_detail=ticket_detail
+            ticket_detail=ticket_detail,
+            volunteer=account_obj.is_service
         )
         return account
 
