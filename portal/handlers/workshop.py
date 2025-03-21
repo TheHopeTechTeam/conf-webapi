@@ -291,7 +291,8 @@ class WorkshopHandler:
                     start_datetime=start_datetime_with_tz,
                     end_datetime=end_datetime_with_tz,
                     is_registered=True,
-                    slido_url=workshop.slido_url
+                    slido_url=workshop.slido_url,
+                    is_full=workshop.participants_limit <= await self.get_workshop_participants_count(workshop_id=workshop.id)
                 )
             )
 

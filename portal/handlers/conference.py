@@ -68,7 +68,7 @@ class ConferenceHandler:
                     bio=instructor.bio,
                     image_url=await self._file_handler.get_file_url(
                         image_id=instructor.image_id,
-                        rendition=Rendition.MAX_100x100.value
+                        rendition=Rendition.MAX_500x500.value
                     )
                 )
             )
