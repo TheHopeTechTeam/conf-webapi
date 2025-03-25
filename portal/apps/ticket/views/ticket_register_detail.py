@@ -119,7 +119,7 @@ class TicketRegisterDetailAdmin(ModelAdmin):
         "format_identity"
     )
 
-    search_fields = ("ticket_number",)
+    search_fields = ("ticket_number", "account__phone_number")
     ordering = ["registered_at"]
 
     inspect_view_fields = [
