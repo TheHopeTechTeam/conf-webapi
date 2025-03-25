@@ -45,7 +45,7 @@ class AccessTokenAuth(HTTPBearer):
         try:
             account_auth_provider = await AccountAuthProvider.objects.aget(provider_id=payload.user_id)
             account = await Account.objects.aget(id=account_auth_provider.account_id)
-        except Account.DoesNotExist:
+        except (Account.DoesNotExist, AccountAuthProvider.DoesNotExist):
             account = None
         return APIContext(
             token=token,
