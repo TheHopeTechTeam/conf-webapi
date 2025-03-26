@@ -23,7 +23,7 @@ class AccountModelAdmin(ModelAdmin):
 
     custom_panels = [
         FieldPanel(field_name="display_name"),
-        FieldPanel(field_name="phone_number"),
+        FieldPanel(field_name="phone_number", read_only=True),
         FieldPanel(field_name="email"),
         FieldPanel(field_name="is_active"),
         FieldPanel(field_name="verified", read_only=True),

@@ -152,7 +152,7 @@ class TicketRegisterDetailAdmin(ModelAdmin):
         """
         return super(TicketRegisterDetailAdmin, self).get_queryset(request)
 
-    @admin.display(description="票號")
+    @admin.display(description="票號", ordering="ticket_number")
     def format_ticket_number(self, obj: TicketRegisterDetail):
         """
 
@@ -188,7 +188,7 @@ class TicketRegisterDetailAdmin(ModelAdmin):
         """
         return obj.account.display_name
 
-    @admin.display(description="電話")
+    @admin.display(description="電話", ordering="account__phone_number")
     def format_account_phone_number(self, obj: TicketRegisterDetail):
         """
 
