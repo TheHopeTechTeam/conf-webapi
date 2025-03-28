@@ -8,6 +8,7 @@ from starlette import status
 
 from portal.containers import Container
 from portal.handlers import FCMDeviceHandler
+from portal.serializers.v1.fcm_device import FCMCreate
 
 router = APIRouter()
 
@@ -21,6 +22,7 @@ async def register_device(
     request: Request,
     response: Response,
     device_id: str,
+    fcm_create: FCMCreate,
     fcm_device_handler: FCMDeviceHandler = Depends(Provide[Container.fcm_device_handler]),
 ):
     """
@@ -28,8 +30,8 @@ async def register_device(
     :param request:
     :param response:
     :param device_id:
+    :param fcm_create:
     :param fcm_device_handler:
     :return:
     """
-    data = await request.json()
-    await fcm_device_handler.register_device(device_id, data)
+    await fcm_device_handler.register_device(device_id, fcm_create)
