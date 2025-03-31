@@ -10,11 +10,13 @@ from fastapi.security.utils import get_authorization_scheme_param
 from starlette import status
 
 from portal.apps.account.models import Account, AccountAuthProvider
+from portal.apps.fcm_device.models import FCMDevice
 from portal.apps.ticket.models import TicketRegisterDetail, Ticket, TicketType
 from portal.exceptions.api_base import APIException
 from portal.handlers import AuthHandler
 from portal.libs.consts.enums import Provider, LoginMethod
 from portal.libs.contexts.api_context import get_api_context, APIContext
+from portal.libs.decorators.sentry_tracer import distributed_trace
 from portal.libs.logger import logger
 from portal.schemas.auth import FirebaseTokenPayload
 from portal.serializers.v1.account import AccountLogin, AccountUpdate, LoginResponse, AccountDetail
@@ -58,6 +60,7 @@ class AccountHandler:
             case _:
                 raise APIException(status_code=status.HTTP_400_BAD_REQUEST, message="Invalid login method")
 
+    @distributed_trace()
     async def firebase_login(self, model: AccountLogin) -> LoginResponse:
         """
         Firebase login
@@ -77,6 +80,7 @@ class AccountHandler:
             account.last_login = now
             await auth_provider_obj.asave()
             await account.asave()
+            await self.device_bind(account=account, device_id=model.device_id)
             return LoginResponse(id=account.id, verified=True)
         try:
             account_obj: Account = await Account.objects.acreate(
@@ -106,11 +110,27 @@ class AccountHandler:
                     exclude={"name", "email", "phone_number", "exp", "iat", "user_id"}
                 )
             )
+            await self.device_bind(account=account_obj, device_id=model.device_id)
         except Exception as e:
             logger.error(f"Error creating account provider: {e}")
             await account_obj.adelete(soft=False)
             raise APIException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, message="Internal Server Error")
         return LoginResponse(id=account_obj.id, verified=True, first_login=True)
+
+    @distributed_trace()
+    async def device_bind(self, account: Account, device_id: str):
+        """
+
+        :param account:
+        :param device_id:
+        :return:
+        """
+        try:
+            fcm_device_obj: FCMDevice = await FCMDevice.objects.aget(device_id=device_id)
+            await fcm_device_obj.accounts.aadd(account)
+            await fcm_device_obj.asave()
+        except Exception as e:
+            logger.error(f"Error binding device: {e}")
 
     async def check_first_login(self, uid: str):
         """

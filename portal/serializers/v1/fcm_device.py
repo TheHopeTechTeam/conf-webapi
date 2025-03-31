@@ -11,4 +11,7 @@ class FCMCreate(BaseModel):
     FCM Create
     """
     fcm_token: str = Field(..., description="FCM Token")
-    data: Optional[dict] = Field(default=None, description="")
+    additional_data: Optional[dict] = Field(
+        default=None,
+        description="Additional data to be sent to the device",
+    )
