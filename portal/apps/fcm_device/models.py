@@ -12,7 +12,7 @@ class FCMDevice(index.Indexed, UUIDModel):
     FCM Device model
     """
     device_id = models.CharField(max_length=255, unique=True)
-    token = models.CharField(max_length=255, unique=True)
+    token = models.CharField(max_length=255)
     additional_data = models.JSONField(blank=True, null=True)
     accounts = models.ManyToManyField("account.Account", related_name="fcm_devices")
     created_at = models.DateTimeField(
