@@ -151,6 +151,7 @@ INSTALLED_APPS = [
     "portal.apps.instructor",
     "portal.apps.language",
     "portal.apps.location",
+    "portal.apps.notification",
     "portal.apps.search",
     "portal.apps.testimony",
     "portal.apps.ticket",

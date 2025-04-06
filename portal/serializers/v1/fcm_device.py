@@ -3,7 +3,7 @@ FCM Device serializers
 """
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class FCMCreate(BaseModel):
@@ -15,3 +15,14 @@ class FCMCreate(BaseModel):
         default=None,
         description="Additional data to be sent to the device",
     )
+
+    @field_validator("fcm_token")
+    def validate_fcm_token(cls, value: str) -> str:
+        """
+        Validate FCM token
+        :param value:
+        :return:
+        """
+        if not value:
+            raise ValueError("FCM token is required")
+        return value
