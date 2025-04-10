@@ -33,6 +33,7 @@ class Account(index.Indexed, UUIDModel):
     is_active = models.BooleanField(default=True)
     verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(editable=False, db_comment="Creation timestamp", auto_now_add=True)
+    updated_at = models.DateTimeField(editable=False, db_comment="Last update timestamp", auto_now=True)
     last_login = models.DateTimeField(null=True, blank=True)
     is_service = models.BooleanField(default=False, db_comment="Is service")
     remark = models.TextField(blank=True, null=True)
@@ -117,6 +118,7 @@ class AccountAuthProvider(index.Indexed, UUIDModel):
     refresh_token = models.CharField(max_length=255, blank=True, null=True)
     token_expires_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(editable=False, db_comment="Creation timestamp", auto_now_add=True)
+    updated_at = models.DateTimeField(editable=False, db_comment="Last update timestamp", auto_now=True)
     extra_data = models.JSONField(blank=True, null=True)
 
     @property

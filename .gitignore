@@ -3,6 +3,7 @@ temp.py
 web
 local.py
 /static
+temp_files
 
 ### Python template
 # Byte-compiled / optimized / DLL files
