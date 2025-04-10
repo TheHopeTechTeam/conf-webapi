@@ -3,6 +3,7 @@ This module contains the models for the language app.
 """
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils import timezone
 from model_utils.models import UUIDModel
 from wagtail.admin.panels import FieldPanel
 
@@ -11,7 +12,8 @@ class Language(UUIDModel):
     code = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
 
     @property
     def pk(self) -> str:
@@ -43,7 +45,8 @@ class Translation(UUIDModel):
     object_id = models.UUIDField()
     field_name = models.CharField(max_length=50)
     translated_text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
 
     @property
     def pk(self) -> str:
@@ -61,6 +64,7 @@ class Translation(UUIDModel):
         db_table = "portal_translation"
         verbose_name = "Translation"
         verbose_name_plural = "Translations"
+
 
 auditlog.register(Language)
 auditlog.register(Translation)

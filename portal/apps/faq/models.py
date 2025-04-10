@@ -3,6 +3,7 @@ This module contains the models for the FAQ app.
 """
 from django.db import models
 from auditlog.registry import auditlog
+from django.utils import timezone
 
 from model_utils.models import UUIDModel, SoftDeletableModel
 from wagtail.models import Orderable
@@ -14,7 +15,8 @@ class FaqCategory(UUIDModel, SoftDeletableModel, Orderable):
 
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     sort_order = models.PositiveIntegerField(default=count)
 
     @property
@@ -43,7 +45,8 @@ class Faq(UUIDModel, SoftDeletableModel, Orderable):
     question = models.TextField()
     answer = models.TextField()
     related_link = models.URLField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     sort_order = models.PositiveIntegerField(default=count)
 
     @property
@@ -65,3 +68,4 @@ class Faq(UUIDModel, SoftDeletableModel, Orderable):
 
 
 auditlog.register(FaqCategory)
+auditlog.register(Faq)

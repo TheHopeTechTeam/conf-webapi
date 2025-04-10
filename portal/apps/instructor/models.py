@@ -1,13 +1,12 @@
 """
 This module contains the models for the instructor app.
 """
-from typing import Any
-
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils import timezone
 from model_utils.models import UUIDModel, SoftDeletableModel
-from wagtail.models import Orderable
 from wagtail.images.models import Image
+from wagtail.models import Orderable
 
 
 class Instructor(UUIDModel, SoftDeletableModel, Orderable):
@@ -27,7 +26,8 @@ class Instructor(UUIDModel, SoftDeletableModel, Orderable):
         on_delete=models.SET_NULL,
         related_name='+',  # Disables reverse relation to optimize database structure
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     sort_order = models.PositiveIntegerField(default=count)
 
     @property

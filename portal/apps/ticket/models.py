@@ -1,5 +1,9 @@
+"""
+Ticket models
+"""
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils import timezone
 
 from model_utils.models import UUIDModel, SoftDeletableModel
 
@@ -12,7 +16,8 @@ class TicketType(index.Indexed, UUIDModel, SoftDeletableModel):
     """
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
 
     @property
     def pk(self) -> str:
@@ -39,7 +44,8 @@ class Ticket(index.Indexed, UUIDModel, SoftDeletableModel):
     description = models.TextField(null=True, blank=True)
     conference = models.ForeignKey('conference.Conference', on_delete=models.CASCADE)
     ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     text_color = models.CharField(max_length=7, null=True, blank=True)
     background_color = models.CharField(max_length=7, null=True, blank=True)
 
@@ -88,6 +94,8 @@ class TicketRegisterDetail(index.Indexed, UUIDModel, SoftDeletableModel):
     order_person_phone_number = models.CharField(max_length=20, blank=True, null=True)
     order_person_email = models.EmailField(max_length=255, blank=True, null=True)
     remark = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
 
     @property
     def pk(self) -> str:

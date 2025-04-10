@@ -7,6 +7,7 @@ from asgiref.sync import sync_to_async
 from auditlog.registry import auditlog
 from django.core.validators import EmailValidator, RegexValidator
 from django.db import models
+from django.utils import timezone
 from model_utils.models import UUIDModel
 from wagtail.search import index
 
@@ -32,8 +33,8 @@ class Account(index.Indexed, UUIDModel):
     gender = models.PositiveSmallIntegerField(choices=Gender.choices, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     verified = models.BooleanField(default=False)
-    created_at = models.DateTimeField(editable=False, db_comment="Creation timestamp", auto_now_add=True)
-    updated_at = models.DateTimeField(editable=False, db_comment="Last update timestamp", auto_now=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     last_login = models.DateTimeField(null=True, blank=True)
     is_service = models.BooleanField(default=False, db_comment="Is service")
     remark = models.TextField(blank=True, null=True)
@@ -117,8 +118,8 @@ class AccountAuthProvider(index.Indexed, UUIDModel):
     access_token = models.CharField(max_length=255, blank=True, null=True)
     refresh_token = models.CharField(max_length=255, blank=True, null=True)
     token_expires_at = models.DateTimeField(blank=True, null=True)
-    created_at = models.DateTimeField(editable=False, db_comment="Creation timestamp", auto_now_add=True)
-    updated_at = models.DateTimeField(editable=False, db_comment="Last update timestamp", auto_now=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     extra_data = models.JSONField(blank=True, null=True)
 
     @property
@@ -146,7 +147,8 @@ class AccountPasswordAuth(index.Indexed, UUIDModel):
     account = models.OneToOneField(Account, on_delete=models.CASCADE)
     password = models.CharField(max_length=255)
     salt = models.CharField(max_length=255)
-    created_at = models.DateTimeField(editable=False, db_comment="Creation timestamp", auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
 
     @property
     def pk(self) -> str:
@@ -167,3 +169,5 @@ class AccountPasswordAuth(index.Indexed, UUIDModel):
 
 
 auditlog.register(Account)
+auditlog.register(AccountAuthProvider)
+auditlog.register(AccountPasswordAuth)

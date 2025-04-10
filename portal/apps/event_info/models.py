@@ -3,6 +3,7 @@ This module contains the models for the event_info app.
 """
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils import timezone
 from model_utils.models import UUIDModel
 from wagtail.admin.forms.account import _get_time_zone_choices
 from wagtail.models import Orderable
@@ -21,7 +22,8 @@ class EventSchedule(index.Indexed, UUIDModel, Orderable):
     description = models.TextField(null=True, blank=True)
     time_zone = models.CharField(max_length=32, choices=_get_time_zone_choices(), default="Asia/Taipei")
     start_time = models.DateTimeField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     sort_order = models.PositiveIntegerField(default=count)
     text_color = models.CharField(max_length=7, null=True, blank=True)
     background_color = models.CharField(max_length=7, null=True, blank=True)

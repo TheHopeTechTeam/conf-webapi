@@ -1,11 +1,11 @@
 """
 This module contains the models for the workshop app.
 """
-from typing import Any
 from zoneinfo import ZoneInfo
 
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils import timezone
 from model_utils.models import UUIDModel, SoftDeletableModel
 from wagtail.admin.forms.account import _get_time_zone_choices  # noqa
 from wagtail.images.models import Image
@@ -17,6 +17,8 @@ class WorkshopTimeSlot(index.Indexed, UUIDModel, SoftDeletableModel):
     time_zone = models.CharField(max_length=32, choices=_get_time_zone_choices(), default="Asia/Taipei")
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
 
     @property
     def pk(self) -> str:
@@ -50,7 +52,8 @@ class Workshop(index.Indexed, UUIDModel, SoftDeletableModel):
     location = models.ForeignKey('location.Location', on_delete=models.PROTECT, null=True)
     instructor = models.ForeignKey('instructor.Instructor', on_delete=models.PROTECT, null=True)
     participants_limit = models.PositiveBigIntegerField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     time_slot = models.ForeignKey(WorkshopTimeSlot, on_delete=models.PROTECT, null=True)
     slido_url = models.URLField(null=True, blank=True)
     image = models.ForeignKey(
@@ -84,6 +87,8 @@ class WorkshopRegistration(index.Indexed, UUIDModel, SoftDeletableModel):
     account = models.ForeignKey('account.Account', on_delete=models.CASCADE)
     registered_at = models.DateTimeField(auto_now_add=True)
     unregistered_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
 
     @property
     def pk(self) -> str:
@@ -104,4 +109,6 @@ class WorkshopRegistration(index.Indexed, UUIDModel, SoftDeletableModel):
         unique_together = ('account', 'workshop')
 
 
+auditlog.register(WorkshopTimeSlot)
 auditlog.register(Workshop)
+auditlog.register(WorkshopRegistration)

@@ -5,6 +5,7 @@ from typing import Any
 
 from auditlog.registry import auditlog
 from django.db import models
+from django.utils import timezone
 from model_utils.models import UUIDModel, SoftDeletableModel
 from wagtail.search import index
 
@@ -16,7 +17,8 @@ class Conference(index.Indexed, UUIDModel, SoftDeletableModel):
     end_date = models.DateField()
     location = models.ForeignKey('location.Location', on_delete=models.SET_NULL, null=True)
     active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     instructors = models.ManyToManyField('instructor.Instructor', related_name="conference_instructors")
 
     @property

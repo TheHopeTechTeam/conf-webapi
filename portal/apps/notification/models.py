@@ -1,18 +1,14 @@
 """
 Notification model
 """
+from auditlog.registry import auditlog
 from django.db import models
+from django.utils import timezone
 from model_utils.models import UUIDModel
 from wagtail.search import index
 
-from portal.libs.consts.enums import NotificationType, NotificationStatus, NotificationHistoryStatus
-from django.db.models.base import ModelBase
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from firebase_admin import messaging
-from sentry_sdk.tracing import Span
-
 from portal.apps.fcm_device.models import FCMDevice
+from portal.libs.consts.enums import NotificationStatus, NotificationHistoryStatus
 from portal.libs.consts.enums import NotificationType
 
 
@@ -22,9 +18,11 @@ class Notification(index.Indexed, UUIDModel):
     """
     title = models.CharField(max_length=255)
     message = models.TextField()
+    url = models.URLField(blank=True, null=True)
     type = models.PositiveSmallIntegerField(choices=NotificationType.choices())
     status = models.PositiveSmallIntegerField(choices=NotificationStatus.choices(), default=NotificationStatus.PENDING.value)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     failure_count = models.PositiveIntegerField(default=0)
     success_count = models.PositiveIntegerField(default=0)
 
@@ -47,7 +45,8 @@ class NotificationHistory(UUIDModel):
     message_id = models.CharField(max_length=255, blank=True, null=True)
     exception = models.TextField(blank=True, null=True)
     status = models.PositiveSmallIntegerField(choices=NotificationHistoryStatus.choices())
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
+    updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
 
     def __str__(self):
         return f"{self.notification.title} - {self.device.device_id} - {self.status}"
@@ -58,3 +57,7 @@ class NotificationHistory(UUIDModel):
         verbose_name = "Notification History"
         verbose_name_plural = "Notification Histories"
         unique_together = ("notification", "device")
+
+
+auditlog.register(Notification)
+auditlog.register(NotificationHistory)

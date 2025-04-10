@@ -1,6 +1,7 @@
 """
 FCM Device model
 """
+from auditlog.registry import auditlog
 from django.db import models
 from django.utils import timezone
 from model_utils.models import UUIDModel
@@ -15,11 +16,7 @@ class FCMDevice(index.Indexed, UUIDModel):
     token = models.CharField(max_length=255)
     additional_data = models.JSONField(blank=True, null=True)
     accounts = models.ManyToManyField("account.Account", related_name="fcm_devices")
-    created_at = models.DateTimeField(
-        editable=False,
-        default=timezone.now,
-        db_comment="Creation timestamp"
-    )
+    created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
     updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
 
     def __str__(self):
@@ -30,3 +27,6 @@ class FCMDevice(index.Indexed, UUIDModel):
         verbose_name = "FCM Device"
         verbose_name_plural = "FCM Devices"
         unique_together = ("device_id", "token")
+
+
+auditlog.register(FCMDevice)
