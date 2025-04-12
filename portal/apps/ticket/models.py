@@ -85,7 +85,7 @@ class TicketRegisterDetail(index.Indexed, UUIDModel, SoftDeletableModel):
 
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     account = models.ForeignKey('account.Account', on_delete=models.CASCADE)
-    ticket_number = models.CharField(max_length=128, blank=True, null=True)
+    ticket_number = models.CharField(max_length=128, unique=True)
     belong_church = models.CharField(max_length=255, blank=True, null=True)
     identity = models.CharField(max_length=16, choices=Identity.choices, blank=True, null=True)
     registered_at = models.DateTimeField(null=True, blank=True)
