@@ -157,6 +157,7 @@ class AccountHandler:
                 email=account_obj.email,
                 phone_number=account_obj.phone_number,
                 display_name=account_obj.display_name if account_obj.display_name else "Unknown",
+                volunteer=account_obj.is_service
             )
         ticket_obj = await Ticket.objects.filter(id=ticket_register_detail_obj.ticket_id).afirst()
         ticket_type_obj = await TicketType.objects.filter(id=ticket_obj.ticket_type_id).afirst()
