@@ -1,6 +1,7 @@
 """
 Location Wagtail Hooks
 """
+from wagtail.admin.panels import FieldPanel, ObjectList
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
@@ -15,15 +16,6 @@ class FeedbackPermission(PermissionHelper):
         """
         User can create obj
         :param user:
-        :return:
-        """
-        return False
-
-    def user_can_edit_obj(self, user, obj):
-        """
-        User can edit obj
-        :param user:
-        :param obj:
         :return:
         """
         return False
@@ -49,6 +41,7 @@ class FeedbackModelAdmin(ModelAdmin):
     list_display = (
         "name",
         "email",
+        "status",
         "created_at",
     )
 
@@ -59,6 +52,8 @@ class FeedbackModelAdmin(ModelAdmin):
         "name",
         "email",
         "message",
+        "remark",
+        "status",
         "created_at",
     ]
 
@@ -66,3 +61,12 @@ class FeedbackModelAdmin(ModelAdmin):
 
     permission_helper_class = FeedbackPermission
 
+    custom_panels = [
+        FieldPanel("name", read_only=True),
+        FieldPanel("email", read_only=True),
+        FieldPanel("message", read_only=True),
+        FieldPanel("remark"),
+        FieldPanel("status"),
+    ]
+
+    edit_handler = ObjectList(custom_panels)

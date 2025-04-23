@@ -83,6 +83,27 @@ class Gender(IntEnum):
         return [(key.value, key.name.title()) for key in cls]
 
 
+class FeedbackStatus(IntEnum):
+    """
+    Feedback status
+    """
+    PENDING = 0
+    REVIEW = 1
+    DISCUSSION = 2
+    ACCEPTED = 3
+    DONE = 4
+    REJECTED = 5
+    ARCHIVED = 6
+
+    @classmethod
+    def choices(cls):
+        """
+
+        :return:
+        """
+        return [(key.value, key.name.title()) for key in cls]
+
+
 class NotificationMethod(IntEnum):
     """
     Notification method

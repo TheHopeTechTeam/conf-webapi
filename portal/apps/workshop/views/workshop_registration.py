@@ -1,22 +1,16 @@
 """
 Workshop Registration Model Admin
 """
+from wagtail.admin.panels import FieldPanel, ObjectList
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin
+from wagtailautocomplete.edit_handlers import AutocompletePanel
 
 from portal.apps.workshop.models import WorkshopRegistration
 
 
 class WorkshopRegistrationPermission(PermissionHelper):
     """WorkshopRegistrationPermission"""
-
-    def user_can_create(self, user):
-        """
-
-        :param user:
-        :return:
-        """
-        return False
 
     def user_can_edit_obj(self, user, obj):
         """
@@ -53,6 +47,13 @@ class WorkshopRegistrationModelAdmin(ModelAdmin):
         "workshop",
     )
 
-    search_fields = ("workshop", "account")
+    search_fields = ("workshop", "account", "account__phone_number")
 
     permission_helper_class = WorkshopRegistrationPermission
+
+    custom_panels = [
+        FieldPanel("workshop"),
+        AutocompletePanel(field_name="account"),
+    ]
+
+    edit_handler = ObjectList(custom_panels)
