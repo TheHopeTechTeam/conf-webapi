@@ -92,7 +92,7 @@ class FeedbackModelAdmin(ModelAdmin):
         "email",
         "message",
         "remark",
-        "",
+        "format_status",
         "created_at",
     ]
 
