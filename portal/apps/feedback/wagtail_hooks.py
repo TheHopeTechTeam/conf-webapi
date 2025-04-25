@@ -1,11 +1,12 @@
 """
 Location Wagtail Hooks
 """
+from django.contrib import admin
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail_modeladmin.views import CreateView, EditView
 
-from portal.libs.consts.enums import MenuOrder
+from portal.libs.consts.enums import MenuOrder, FeedbackStatus
 from .forms import FeedbackForm
 from .models import Feedback
 
@@ -81,6 +82,8 @@ class FeedbackModelAdmin(ModelAdmin):
         "created_at",
     )
 
+    list_filter = ("status",)
+
     search_fields = ("name", "email", "message")
     ordering = ["-created_at"]
 
@@ -89,7 +92,7 @@ class FeedbackModelAdmin(ModelAdmin):
         "email",
         "message",
         "remark",
-        "status",
+        "",
         "created_at",
     ]
 
@@ -99,3 +102,13 @@ class FeedbackModelAdmin(ModelAdmin):
 
     create_view_class = FeedbackCreateView
     edit_view_class = FeedbackEditView
+
+
+    @admin.display(description="Status")
+    def format_status(self, obj: Feedback):
+        """
+        Format status
+        :param obj:
+        :return:
+        """
+        return FeedbackStatus(obj.status).name.title()
