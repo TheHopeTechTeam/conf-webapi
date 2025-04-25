@@ -163,7 +163,7 @@ async def create_ticket_register_detail_obj(convert_record: dict) -> TicketRegis
             ticket=ticket,
             account=account_obj,
             belong_church=convert_record.get("所屬教會"),
-            identity=IDENTITY_MAPPING.get(convert_record.get("身份")),
+            identity=IDENTITY_MAPPING.get(convert_record.get("所屬教會身份")),
             registered_at=utc_registered_at,
             order_person_name=convert_record.get("訂購人姓名"),
             order_person_phone_number=str(int(order_person_phone_number)) if order_person_phone_number else None,

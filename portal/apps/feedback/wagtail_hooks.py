@@ -70,7 +70,7 @@ class FeedbackEditView(EditView):
 @modeladmin_register
 class FeedbackModelAdmin(ModelAdmin):
     model = Feedback
-    base_url_path = "Feedback"
+    base_url_path = "feedback"
     menu_label = "Feedback"
     menu_icon = "form"
     menu_order = MenuOrder.Feedback
