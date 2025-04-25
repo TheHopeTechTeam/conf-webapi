@@ -47,7 +47,7 @@ class WorkshopRegistrationModelAdmin(ModelAdmin):
         "workshop",
     )
 
-    search_fields = ("workshop", "account", "account__phone_number")
+    search_fields = ("workshop__title", "account__phone_number")
 
     permission_helper_class = WorkshopRegistrationPermission
 

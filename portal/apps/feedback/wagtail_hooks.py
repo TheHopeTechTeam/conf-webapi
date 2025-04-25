@@ -1,12 +1,13 @@
 """
 Location Wagtail Hooks
 """
-from wagtail.admin.panels import FieldPanel, ObjectList
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
+from wagtail_modeladmin.views import CreateView, EditView
 
-from .models import Feedback
 from portal.libs.consts.enums import MenuOrder
+from .forms import FeedbackForm
+from .models import Feedback
 
 
 class FeedbackPermission(PermissionHelper):
@@ -28,6 +29,41 @@ class FeedbackPermission(PermissionHelper):
         :return:
         """
         return False
+
+
+class FeedbackCreateView(CreateView):
+    """
+    Feedback Create View
+    """
+
+    def get_form_class(self):
+        """
+
+        :return:
+        """
+        return FeedbackForm
+
+
+class FeedbackEditView(EditView):
+    """
+    Feedback Edit View
+    """
+
+    def get_context_data(self, **kwargs):
+        """
+
+        :param kwargs:
+        :return:
+        """
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_form_class(self):
+        """
+
+        :return:
+        """
+        return FeedbackForm
 
 
 @modeladmin_register
@@ -61,12 +97,5 @@ class FeedbackModelAdmin(ModelAdmin):
 
     permission_helper_class = FeedbackPermission
 
-    custom_panels = [
-        FieldPanel("name", read_only=True),
-        FieldPanel("email", read_only=True),
-        FieldPanel("message", read_only=True),
-        FieldPanel("remark"),
-        FieldPanel("status"),
-    ]
-
-    edit_handler = ObjectList(custom_panels)
+    create_view_class = FeedbackCreateView
+    edit_view_class = FeedbackEditView

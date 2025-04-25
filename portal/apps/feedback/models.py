@@ -20,8 +20,7 @@ class Feedback(index.Indexed, UUIDModel):
     created_at = models.DateTimeField(editable=False, default=timezone.now, db_comment="Creation timestamp")
     updated_at = models.DateTimeField(editable=False, db_comment="Update timestamp", auto_now=True)
     remark = models.TextField(null=True, blank=True)
-    status = models.CharField(max_length=24, choices=FeedbackStatus.choices(), default="Pending", db_comment="Feedback status")
-
+    status = models.PositiveSmallIntegerField(choices=FeedbackStatus.choices(), default=FeedbackStatus.PENDING.value, db_comment="Feedback status")
 
     @property
     def pk(self) -> str:
