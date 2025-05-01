@@ -1,6 +1,8 @@
 """
 Ticket models
 """
+from typing import Any
+
 from auditlog.registry import auditlog
 from django.db import models
 from django.utils import timezone
@@ -36,6 +38,7 @@ class TicketType(index.Indexed, UUIDModel, SoftDeletableModel):
         verbose_name_plural = "Ticket Types"
         ordering = ["name"]
 
+
 class Ticket(index.Indexed, UUIDModel, SoftDeletableModel):
     """
     Ticket model
@@ -66,6 +69,7 @@ class Ticket(index.Indexed, UUIDModel, SoftDeletableModel):
         verbose_name_plural = "Tickets"
         ordering = ["title"]
 
+
 class TicketRegisterDetail(index.Indexed, UUIDModel, SoftDeletableModel):
     """
     Ticket Register Detail model
@@ -81,7 +85,6 @@ class TicketRegisterDetail(index.Indexed, UUIDModel, SoftDeletableModel):
         THEOLOGY_STUDENT = "theology_student", "神學生"
         MINISTRY_LEADER = "ministry_leader", "事工負責人"
         CONGREGANT = "congregant", "會眾"
-
 
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     account = models.ForeignKey('account.Account', on_delete=models.CASCADE)
@@ -107,6 +110,23 @@ class TicketRegisterDetail(index.Indexed, UUIDModel, SoftDeletableModel):
 
     def __str__(self):
         return f"{self.account.display_name} - {self.ticket.title}"
+
+    def delete(
+        self,
+        using: Any = None,
+        *args: Any,
+        soft: bool = True,
+        **kwargs: Any
+    ) -> tuple[int, dict[str, int]] | None:
+        """
+        Override delete method to set unregistered_at
+        :param using:
+        :param args:
+        :param soft:
+        :param kwargs:
+        :return:
+        """
+        return super().delete(using, *args, soft=False, **kwargs)
 
     class Meta:
         db_table = "portal_ticket_register_detail"

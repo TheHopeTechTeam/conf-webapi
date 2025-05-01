@@ -2,10 +2,46 @@
 Account wagtail hooks
 """
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
-from wagtail.admin.panels import FieldPanel, ObjectList
+from wagtail_modeladmin.views import CreateView, EditView
 
-from .models import Account
 from portal.libs.consts.enums import MenuOrder
+from .forms import AccountForm
+from .models import Account
+
+
+class AccountCreateView(CreateView):
+    """
+    Account Create View
+    """
+
+    def get_form_class(self):
+        """
+
+        :return:
+        """
+        return AccountForm
+
+
+class AccountEditView(EditView):
+    """
+    Account Edit View
+    """
+
+    def get_context_data(self, **kwargs):
+        """
+
+        :param kwargs:
+        :return:
+        """
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_form_class(self):
+        """
+
+        :return:
+        """
+        return AccountForm
 
 
 @modeladmin_register
@@ -21,14 +57,5 @@ class AccountModelAdmin(ModelAdmin):
 
     search_fields = ("display_name", "phone_number", "email")
 
-    custom_panels = [
-        FieldPanel(field_name="display_name"),
-        FieldPanel(field_name="phone_number", read_only=True),
-        FieldPanel(field_name="email"),
-        FieldPanel(field_name="is_active"),
-        FieldPanel(field_name="verified", read_only=True),
-        FieldPanel(field_name="last_login", read_only=True),
-        FieldPanel(field_name="is_service", help_text="是否為服侍"),
-    ]
-
-    edit_handler = ObjectList(custom_panels)
+    edit_view_class = AccountEditView
+    create_view_class = AccountCreateView
