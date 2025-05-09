@@ -44,5 +44,4 @@ class Container(containers.DeclarativeContainer):
     workshop_handler = providers.Factory(
         WorkshopHandler,
         file_handler=file_handler
-        # redis=redis_pool
     )

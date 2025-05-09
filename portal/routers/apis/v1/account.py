@@ -1,7 +1,6 @@
 """
 Account API Router
 """
-import random
 import uuid
 
 from dependency_injector.wiring import inject, Provide
@@ -12,15 +11,11 @@ from portal.containers import Container
 from portal.handlers import AccountHandler
 from portal.libs.depends import (
     check_access_token,
-    DEFAULT_RATE_LIMITERS,
 )
 from portal.route_classes import LogRoute
 from portal.serializers.v1.account import AccountLogin, AccountDetail, AccountUpdate, LoginResponse
 
 router = APIRouter(
-    dependencies=[
-        *DEFAULT_RATE_LIMITERS
-    ],
     route_class=LogRoute
 )
 

@@ -130,7 +130,7 @@ class AccountHandler:
             await fcm_device_obj.accounts.aadd(account)
             await fcm_device_obj.asave()
         except Exception as e:
-            logger.error(f"Error binding device: {e}")
+            logger.warning(f"Binding device warning: {e}")
 
     async def check_first_login(self, uid: str):
         """

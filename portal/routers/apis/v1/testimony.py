@@ -10,17 +10,11 @@ from starlette import status
 
 from portal.containers import Container
 from portal.handlers import TestimonyHandler
-from portal.libs.depends import (
-    DEFAULT_RATE_LIMITERS,
-)
 from portal.route_classes import LogRoute
 from portal.serializers.base import HeaderInfo
 from portal.serializers.v1.testimony import TestimonyCreate, TestimonyCreateResponse
 
 router = APIRouter(
-    dependencies=[
-        *DEFAULT_RATE_LIMITERS
-    ],
     route_class=LogRoute
 )
 

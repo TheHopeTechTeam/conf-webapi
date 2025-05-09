@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import json
 import os
 from pathlib import Path, PosixPath
+from typing import Optional
 
 import environ
 from google.oauth2 import service_account
@@ -56,15 +57,18 @@ AWS_S3_OBJECT_PARAMETERS: dict = {
     "CacheControl": "max-age=86400",
 }
 
-REDIS_URL: str = env(var="REDIS_URL", default="redis://localhost:6379/0")
+REDIS_URL: Optional[str] = env(var="REDIS_URL", default=None)
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
-    }
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
+    # "default": {
+    #     "BACKEND": "django_redis.cache.RedisCache",
+    #     "LOCATION": REDIS_URL,
+    #     "OPTIONS": {
+    #         "CLIENT_CLASS": "django_redis.client.DefaultClient",
+    #     }
+    # }
 }
 
 # [CORS]

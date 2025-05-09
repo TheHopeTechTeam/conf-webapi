@@ -13,7 +13,7 @@ from portal.libs.contexts.api_context import set_api_context, APIContext
 @pytest.fixture
 def account_id() -> uuid.UUID:
     """Get the account."""
-    return uuid.UUID("ca659ec3-5514-485a-a181-4491031b81b1")
+    return uuid.UUID("aef07d70-bfdb-4176-be6e-d3a607298776")
 
 
 @pytest.fixture
